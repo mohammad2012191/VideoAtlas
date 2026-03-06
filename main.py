@@ -23,6 +23,7 @@ from logger import setup_logger, log, close_logger
 from metrics import metrics
 from agents import MasterAgent, WorkerAgent
 from pipeline import process_question
+from visualize_run import build_video
 
 
 # ==========================================
@@ -195,6 +196,28 @@ def main():
         print(f"  Log:       {log_path}")
         print(f"  Result:    {result_path}")
         print("="*60)
+
+        # Auto-generate replay video
+        images_dir = os.path.splitext(log_path)[0] + "_images"
+        if os.path.isdir(images_dir):
+            print("\n" + "="*60)
+            print("GENERATING REPLAY VIDEO")
+            print("="*60)
+            try:
+                replay_path = build_video(
+                    run_folder=images_dir,
+                    output_path=None,       # saves to <images_dir>/replay.mp4
+                    fps=1.5,
+                    result_json_path=result_path,
+                )
+                if replay_path:
+                    print(f"  Replay:    {replay_path}")
+                    log(f"Replay video saved to: {replay_path}")
+            except Exception as ve:
+                print(f"  [!] Replay video generation failed: {ve}")
+                log(f"[WARN] Replay video generation failed: {ve}")
+        else:
+            log(f"[INFO] No debug images folder at {images_dir} — skipping replay video.")
 
     except Exception as e:
         wall_time = time.time() - t_start

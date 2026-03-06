@@ -30,7 +30,7 @@ VERTEX_BASE_URL = (
 # OUTPUT
 # ==========================================
 OUTPUT_DIR = "results"       # Directory to save log files and predictions
-DEBUG = False                 # True = verbose output to log file and console
+DEBUG = True                 # True = verbose output to log file and console
 
 # ==========================================
 # EXPLORATION SETTINGS

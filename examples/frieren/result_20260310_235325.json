@@ -1,0 +1,28 @@
+{
+  "question": "How many swords does the monster have?",
+  "candidates": [
+    "1",
+    "2",
+    "4"
+  ],
+  "predicted_choice": 2,
+  "predicted_answer": "4",
+  "reasoning": "Based on the evidence provided, there are conflicting mentions of the number of swords. Evidence [B] at 809.3s includes a subtitle stating 'it fought with two swords'. However, evidence [D] at 1327.5s provides more direct visual and textual confirmation, showing a silhouette of a monster with four arms, each holding a sword, accompanied by the subtitle 'Four blades...'. This later evidence specifically identifies the monster's current state or true form as having four swords.",
+  "metrics": {
+    "vlm_calls": 30,
+    "input_tokens": 77200,
+    "output_tokens": 1411,
+    "total_tokens": 78611,
+    "master_tokens": 16575,
+    "worker_tokens": 62036,
+    "estimated_tflops": 471.67,
+    "frames_decoded": 1004,
+    "total_frames": 34526,
+    "sufficiency_checks": 1,
+    "explore_rounds": 1,
+    "evidence_count": 4,
+    "wall_time_s": 182.69,
+    "coverage_pct": 0.0,
+    "mode_used": "DFS"
+  }
+}

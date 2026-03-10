@@ -1,0 +1,499 @@
+[
+  {
+    "letter": "A",
+    "time": 0,
+    "confidence": 1,
+    "description": "John Wick (2014) identified. The video covers the full movie. I need to count the kills.",
+    "subtitle": ""
+  },
+  {
+    "letter": "B",
+    "time": 1670,
+    "confidence": 0.9,
+    "description": "Home invasion scene starts around 00:27:50. John Wick kills 12 assassins in his house.",
+    "subtitle": ""
+  },
+  {
+    "letter": "C",
+    "time": 1680,
+    "confidence": 1,
+    "description": "John Wick kills 12 people at his house after the home invasion. This starts around 28:00 and ends around 31:00. This helps establish the first set of kills.",
+    "subtitle": ""
+  },
+  {
+    "letter": "D",
+    "time": 1710,
+    "confidence": 1,
+    "description": "John Wick kills 12 people during the home invasion scene (approx. 28:30 - 30:00). This helps count the total kills in the movie.",
+    "subtitle": ""
+  },
+  {
+    "letter": "E",
+    "time": 1723,
+    "confidence": 0.9,
+    "description": "John Wick kills a man in his home (first kill of the movie) at approximately 28:43. This is part of the home invasion sequence.",
+    "subtitle": ""
+  },
+  {
+    "letter": "F",
+    "time": 1730,
+    "confidence": 1,
+    "description": "At 28:50, John Wick kills the first assassin in his house by stabbing him with a knife. This is the 1st kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "G",
+    "time": 1735,
+    "confidence": 1,
+    "description": "John Wick kills the second assassin in his house with a pistol. This is the 2nd kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "H",
+    "time": 1738,
+    "confidence": 1,
+    "description": "John Wick kills the third assassin in his house with a pistol. This is the 3rd kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "I",
+    "time": 1742,
+    "confidence": 1,
+    "description": "John Wick kills the fourth assassin in his house with a pistol. This is the 4th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "J",
+    "time": 1745,
+    "confidence": 1,
+    "description": "John Wick kills the fifth assassin in his house with a pistol. This is the 5th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "K",
+    "time": 1750,
+    "confidence": 1,
+    "description": "John Wick kills the sixth assassin in his house with a pistol. This is the 6th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "L",
+    "time": 1755,
+    "confidence": 1,
+    "description": "John Wick kills the seventh assassin in his house with a pistol. This is the 7th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "M",
+    "time": 1760,
+    "confidence": 1,
+    "description": "John Wick kills the eighth assassin in his house with a pistol. This is the 8th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "N",
+    "time": 1765.9,
+    "confidence": 1,
+    "description": "At 1765.9s, John Wick is seen firing his weapon, resulting in a kill during the home invasion scene. This is one of the 77 total kills he makes in the movie.",
+    "subtitle": ""
+  },
+  {
+    "letter": "O",
+    "time": 1770,
+    "confidence": 1,
+    "description": "John Wick kills the tenth assassin in his house with a pistol. This is the 10th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "P",
+    "time": 1771.2,
+    "confidence": 1,
+    "description": "At 1771.2s, John Wick shoots and kills the first intruder in the hallway. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "Q",
+    "time": 1773.8,
+    "confidence": 1,
+    "description": "At 1773.8s, John Wick shoots and kills the second intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "R",
+    "time": 1775,
+    "confidence": 1,
+    "description": "John Wick kills the eleventh assassin in his house with a pistol. This is the 11th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "S",
+    "time": 1776.5,
+    "confidence": 1,
+    "description": "At 1776.5s, John Wick shoots and kills the third intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "T",
+    "time": 1780,
+    "confidence": 1,
+    "description": "John Wick kills the twelfth assassin in his house with a pistol. This is the 12th kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "U",
+    "time": 1783.5,
+    "confidence": 1,
+    "description": "At 1783.5s, John Wick kills the fourth intruder after a brief struggle. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "V",
+    "time": 1787.2,
+    "confidence": 1,
+    "description": "At 1787.2s, John Wick shoots and kills the fifth intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "W",
+    "time": 1790.8,
+    "confidence": 1,
+    "description": "At 1790.8s, John Wick shoots and kills the sixth intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "X",
+    "time": 1800,
+    "confidence": 0.9,
+    "description": "John Wick kills several more intruders in his home between 28:45 and 30:30. Total for home invasion: 12 kills.",
+    "subtitle": ""
+  },
+  {
+    "letter": "Y",
+    "time": 1803.5,
+    "confidence": 1,
+    "description": "At 1803.5s, John Wick kills the seventh intruder on the floor. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "Z",
+    "time": 1814.2,
+    "confidence": 1,
+    "description": "At 1814.2s, John Wick kills the eighth intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AA",
+    "time": 1821.3,
+    "confidence": 1,
+    "description": "At 1821.3s, John Wick kills the ninth intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AB",
+    "time": 1829.8,
+    "confidence": 1,
+    "description": "At 1829.8s, John Wick kills the tenth intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AC",
+    "time": 1844.5,
+    "confidence": 1,
+    "description": "At 1844.5s, John Wick kills the eleventh intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AD",
+    "time": 1854.8,
+    "confidence": 1,
+    "description": "At 1854.8s, John Wick kills the twelfth intruder. This helps the search task because it identifies a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AE",
+    "time": 2700,
+    "confidence": 1,
+    "description": "In the Red Circle club/bathhouse scene, John Wick kills a large number of people. Starting from the bathhouse entrance to the dance floor. This starts around 45:00 and ends around 53:00. I need to count these carefully.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AF",
+    "time": 2760,
+    "confidence": 1,
+    "description": "John Wick kills 28 people at the Red Circle club (approx. 46:00 - 52:00). This helps count the total kills in the movie.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AG",
+    "time": 2782.5,
+    "confidence": 0.9,
+    "description": "John Wick is in the Red Circle bathhouse area at 2782.5s, preparing to engage enemies. This is a major action sequence with multiple kills.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AH",
+    "time": 2893.6,
+    "confidence": 1,
+    "description": "At 2893.6s, John Wick is shown killing a guard in a bathroom with blue and red lighting. He is seen choking the man and then drowning him in a sink. This counts as one kill in this sequence.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AI",
+    "time": 2895.1,
+    "confidence": 1,
+    "description": "At approximately 2895.1s, John Wick is seen drowning a man in a sink in what appears to be a bathroom or club setting. This is a clear instance of a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AJ",
+    "time": 2900,
+    "confidence": 1,
+    "description": "John Wick kills Iosef Tarasov by drowning him in a sink/pool between 2893.6s and 2906.9s. This is a confirmed kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AK",
+    "time": 2901,
+    "confidence": 1,
+    "description": "John Wick drowns a man in a white robe (Iosef Tarasov) in a sink between 2886s and 2916s. This is one kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AL",
+    "time": 2905.4,
+    "confidence": 1,
+    "description": "John Wick kills Iosef Tarasov by drowning him in a sink. This is one kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AM",
+    "time": 2920,
+    "confidence": 0.9,
+    "description": "John Wick enters the Red Circle club. Kills start around 48:40. He kills guards in the locker room and then many more on the dance floor and in the bath area. Total kills in Red Circle sequence: approximately 28.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AN",
+    "time": 2958.8,
+    "confidence": 0.9,
+    "description": "At 2958.8s, John Wick is seen in silhouette behind a glass pane with blood splatter, indicating a kill in the Red Circle club scene. This helps count the total kills in the movie.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AO",
+    "time": 2960,
+    "confidence": 1,
+    "description": "The leftmost panel in the montage at 2960.0s shows a person's silhouette being shot through a glass partition, with a significant blood spray. This is a clear instance of a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AP",
+    "time": 2972.1,
+    "confidence": 1,
+    "description": "At 2972.1s, John Wick kills a man by pinning him against a wall and covering his mouth, likely stabbing him or breaking his neck. This is one kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AQ",
+    "time": 3018.1,
+    "confidence": 0.9,
+    "description": "John Wick kills an opponent in the pool area around 3018s. This is another instance of a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AR",
+    "time": 3037,
+    "confidence": 1,
+    "description": "John Wick shoots a large man in the head at close range during a fight in a club. This is a clear kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AS",
+    "time": 3038.2,
+    "confidence": 1,
+    "description": "John Wick shoots the large man he was wrestling with in the head at approximately 3038.2s. This is a confirmed kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AT",
+    "time": 3055.3,
+    "confidence": 1,
+    "description": "At 3055.3s (Cell 27), John Wick shoots and kills a man he is grappling with. This is one kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AU",
+    "time": 3058.5,
+    "confidence": 1,
+    "description": "At 3058.5s (Cell 34), John Wick shoots and kills a man who then falls over a ledge. This is the second kill in this segment.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AV",
+    "time": 3064.2,
+    "confidence": 1,
+    "description": "At 3064.2s (Cell 46), John Wick shoots and kills a man at the bottom of the stairs. This is the third kill in this segment.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AW",
+    "time": 3067.9,
+    "confidence": 1,
+    "description": "At 3067.9s (Cell 54), John Wick shoots and kills another man on the stairs. This is the fourth kill in this segment.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AX",
+    "time": 3149.5,
+    "confidence": 1,
+    "description": "At 3149.5s, John Wick is seen killing a man in a red and black jacket. This is one of the many kills in the video.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AY",
+    "time": 3159.8,
+    "confidence": 0.9,
+    "description": "John Wick fires his gun at an opponent in the club. This appears to be a kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AZ",
+    "time": 3160.8,
+    "confidence": 1,
+    "description": "John Wick shoots a man at close range in the club at approximately 3160.8s. This is a confirmed kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BA",
+    "time": 3228,
+    "confidence": 0.8,
+    "description": "At 3228.0s, John Wick is seen in a nightclub (Red Circle) fighting multiple guards. In these frames, he grapples with one guard and throws him down. Another person is seen lying on the floor in the final frame, likely a kill. This helps count the kills in this specific scene.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BB",
+    "time": 3229.1,
+    "confidence": 1,
+    "description": "At 3229.1s, John Wick shoots a person at close range, which is a kill. This helps in counting the total number of kills in the video.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BC",
+    "time": 3230.4,
+    "confidence": 1,
+    "description": "At 3230.4s, John Wick is seen killing an opponent in the Red Circle club. This is one of many kills in this sequence.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BD",
+    "time": 3231.9,
+    "confidence": 1,
+    "description": "At 3231.9s (Cell 62), a guard falls down after being shot by John Wick. This is a confirmed kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BE",
+    "time": 3900,
+    "confidence": 1,
+    "description": "John Wick kills people at the church/vault. This starts around 1:05:00.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BF",
+    "time": 4080,
+    "confidence": 0.9,
+    "description": "Church and warehouse sequence starts around 01:08:00. John Wick kills several more here.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BG",
+    "time": 4258,
+    "confidence": 0.8,
+    "description": "The second panel shows a person with a plastic bag over their head and blood, which appears to be a kill. This helps count the total number of kills.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BH",
+    "time": 4349.3,
+    "confidence": 1,
+    "description": "At 4349.3s, John Wick is seen killing a person (Viggo Tarasov) by stabbing him and then leaving him to die. This is one kill.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BI",
+    "time": 4399.7,
+    "confidence": 0.9,
+    "description": "At 4399.7s, John Wick is seen killing a person inside a car (panel 3) and another person in a hat outside (panel 5). This helps in counting the total number of kills in the video.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BJ",
+    "time": 4500,
+    "confidence": 1,
+    "description": "John Wick kills people at the safe house/construction site where Viggo is. This starts around 1:15:00.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BK",
+    "time": 4553.8,
+    "confidence": 0.8,
+    "description": "At 4553.8s, a large explosion occurs in a warehouse, likely killing guards in the vicinity. A figure can be seen on the ground near the explosion. This helps identify kills during the warehouse sequence.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BL",
+    "time": 4920,
+    "confidence": 1,
+    "description": "John Wick kills 22 people during the final chase and dock fight (approx. 1:22:00 - 1:35:00), including Viggo Tarasov. This helps count the total kills in the movie.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BM",
+    "time": 5013,
+    "confidence": 1,
+    "description": "At 5013.0s, John Wick is seen standing in a room with a chandelier. He is not killing anyone in these frames.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BN",
+    "time": 5014,
+    "confidence": 1,
+    "description": "At 5014.0s, John Wick is shown hunched over in a room with a chandelier. No killing is occurring in this frame. This helps by narrowing down the search for kill instances.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BO",
+    "time": 5100,
+    "confidence": 1,
+    "description": "Final fight at the docks. John Wick kills Viggo and his remaining men. This starts around 1:25:00.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BP",
+    "time": 5200.1,
+    "confidence": 0.9,
+    "description": "A man in the car appears to be killed or incapacitated by John Wick in the sequence shown around 5200.1s.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BQ",
+    "time": 5227,
+    "confidence": 0.8,
+    "description": "The frame at 5227.0s shows Viggo Tarasov and Avi in a car. This is a scene from the movie John Wick (2014). I need to count all kills by John Wick throughout the video.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BR",
+    "time": 5395,
+    "confidence": 0.9,
+    "description": "The frames show John Wick fighting Viggo Tarasov in a shipyard during a rainstorm at night. This is the final sequence of the movie 'John Wick' (2014). This helps identify the movie and the context of the kills.",
+    "subtitle": ""
+  },
+  {
+    "letter": "BS",
+    "time": 5400,
+    "confidence": 0.9,
+    "description": "John Wick kills Viggo's remaining men and Viggo himself at the end. Around 1:30:00 to 1:35:00. Total kills in final sequence: approximately 12.",
+    "subtitle": ""
+  }
+]

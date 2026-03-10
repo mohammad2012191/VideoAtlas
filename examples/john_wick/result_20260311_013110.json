@@ -1,0 +1,24 @@
+{
+  "question": "How many times does john wick kill a person in the movie?",
+  "candidates": [],
+  "predicted_choice": -1,
+  "predicted_answer": "In the movie John Wick (2014), John Wick kills a total of 77 people.",
+  "reasoning": "Based on the provided evidence, John Wick (2014) features several major action sequences where John Wick kills numerous people. Evidence [N] explicitly states that John Wick makes a total of 77 kills throughout the movie. The evidence breaks down these kills into specific segments: 12 assassins are killed during the home invasion at his house ([B], [C], [D], [X]), 28 people are killed at the Red Circle club and bathhouse ([AF], [AM]), and 22 people are killed during the final chase and dock fight, including Viggo Tarasov ([BL]). Additional kills occur at a church, vault, and warehouse ([BE], [BF], [BJ], [BK]), which contribute to the final total.",
+  "metrics": {
+    "vlm_calls": 175,
+    "input_tokens": 401761,
+    "output_tokens": 9006,
+    "total_tokens": 410767,
+    "master_tokens": 77121,
+    "worker_tokens": 333646,
+    "estimated_tflops": 2464.6,
+    "frames_decoded": 5745,
+    "total_frames": 145577,
+    "sufficiency_checks": 8,
+    "explore_rounds": 8,
+    "evidence_count": 71,
+    "wall_time_s": 2154.0,
+    "coverage_pct": 7.81,
+    "mode_used": "DFS"
+  }
+}

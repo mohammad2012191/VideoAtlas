@@ -1,0 +1,30 @@
+[
+  {
+    "letter": "A",
+    "time": 786.7,
+    "confidence": 0.8,
+    "description": "A creature is visible in the top right corner near the door. It appears to be holding weapons. I need to zoom in to count them accurately.",
+    "subtitle": ""
+  },
+  {
+    "letter": "B",
+    "time": 809.3,
+    "confidence": 0.8,
+    "description": "Subtitles at 808.6s-810.0s (cells 60-63) state 'it fought with two swords'. This likely refers to the monster being discussed.",
+    "subtitle": "Maybe... | it fought with two swords."
+  },
+  {
+    "letter": "C",
+    "time": 1260,
+    "confidence": 0.8,
+    "description": "A character in a red cloak is sitting in a doorway at 1260s. This might be the 'monster' or a protagonist. I need to look for a monster.",
+    "subtitle": "In other words, there should naturally  be a difference in the cuts inflicted."
+  },
+  {
+    "letter": "D",
+    "time": 1327.5,
+    "confidence": 1,
+    "description": "At 1327.5s, a silhouette of a monster is shown with four arms, each holding a sword. There are two swords on the left side and two swords on the right side. This directly answers the search task.",
+    "subtitle": "Four blades..."
+  }
+]

@@ -30,6 +30,10 @@ from visualize_run import build_video
 # RESULT HELPERS
 # ==========================================
 def extract_choice(result, candidates):
+    # Open-ended mode — no candidates to match against
+    if not candidates:
+        return -1, result.get("answer", "")
+
     choice = result.get("choice", -1)
     answer = result.get("answer", "")
 
@@ -91,16 +95,22 @@ def collect_inputs():
             break
         print("  [!] Question cannot be empty.")
 
-    # Candidates
+    # Candidates (optional — leave blank for open-ended)
     print("\nEnter answer options, one per line.")
-    print("Press Enter twice when done (minimum 2 options).")
+    print("Press Enter with NO text to skip (open-ended question).")
+    print("Or enter at least 2 options for multiple-choice.")
     candidates = []
     while True:
         opt = input(f"  Option {len(candidates)}: ").strip()
         if opt == "":
-            if len(candidates) >= 2:
+            if len(candidates) == 0:
+                # User wants open-ended mode
+                print("  → Open-ended mode (no answer choices).")
                 break
-            print("  [!] Please enter at least 2 options.")
+            elif len(candidates) >= 2:
+                break
+            else:
+                print("  [!] Enter at least 2 options, or leave the first option blank to skip.")
         else:
             candidates.append(opt)
 
@@ -131,8 +141,11 @@ def main():
     log("="*60)
 
     # Build query string
-    candidates_str = ", ".join([f"{i}: '{c}'" for i, c in enumerate(candidates)])
-    query = f"In the given video, {question} Choose a single answer: {candidates_str}"
+    if candidates:
+        candidates_str = ", ".join([f"{i}: '{c}'" for i, c in enumerate(candidates)])
+        query = f"In the given video, {question} Choose a single answer: {candidates_str}"
+    else:
+        query = f"In the given video, {question}"
 
     # Instantiate agents
     print(f"\nLoading agents (NUM_GPUS={NUM_GPUS})...")
@@ -174,12 +187,15 @@ def main():
         log("\n" + "="*60)
         log("FINAL RESULT")
         log("="*60)
-        log(f"  Question:         {question}")
-        for i, c in enumerate(candidates):
-            marker = " ← PREDICTED" if i == pred_choice else ""
-            log(f"  Option {i}: {c}{marker}")
-        log(f"\n  Predicted answer: {pred_answer} (index {pred_choice})")
-        log(f"  Reasoning:        {result.get('reasoning', '')[:500]}")
+        log(f"  Question: {question}")
+        if candidates:
+            for i, c in enumerate(candidates):
+                marker = " ← PREDICTED" if i == pred_choice else ""
+                log(f"  Option {i}: {c}{marker}")
+            log(f"\n  Predicted answer: {pred_answer} (index {pred_choice})")
+        else:
+            log(f"\n  Answer: {pred_answer}")
+        log(f"  Reasoning: {result.get('reasoning', '')[:500]}")
         print_metrics(m)
 
         # Save result JSON
@@ -192,9 +208,12 @@ def main():
         print("\n" + "="*60)
         print("ANSWER")
         print("="*60)
-        print(f"  Predicted: [{pred_choice}] {pred_answer}")
-        print(f"  Log:       {log_path}")
-        print(f"  Result:    {result_path}")
+        if candidates:
+            print(f"  Predicted: [{pred_choice}] {pred_answer}")
+        else:
+            print(f"  Answer: {pred_answer}")
+        print(f"  Log:    {log_path}")
+        print(f"  Result: {result_path}")
         print("="*60)
 
         # Auto-generate replay video

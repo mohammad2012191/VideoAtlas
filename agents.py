@@ -1,7 +1,10 @@
 """
 agents.py — Master and Worker VLM agents.
 
-Both use the same Vertex AI / OpenAI-compatible backend.
+Supports two backends, configured via config.BACKEND:
+  - "google"  → Google AI (Gemini) API using an API key
+  - "vertex"  → Vertex AI using a GCP service account JSON
+
 MasterAgent handles: sufficiency checks, uncertainty analysis, final decisions.
 WorkerAgent handles: regional exploration.
 """
@@ -13,15 +16,17 @@ import time
 import base64
 import random
 
-import google.oauth2.service_account
-import google.auth.transport.requests
 from openai import OpenAI
 from PIL import Image
 
 from config import (
+    BACKEND,
     MASTER_MODEL_PATH, WORKER_MODEL_PATH,
+    MAX_PROBE_RETRIES, GRID_K,
+    # Google AI settings
+    GOOGLE_API_KEY, GOOGLE_BASE_URL,
+    # Vertex AI settings
     VERTEX_BASE_URL, SERVICE_ACCOUNT_FILE,
-    MAX_PROBE_RETRIES, GRID_K
 )
 from metrics import metrics
 from memory import _idx_to_letter, _letter_to_idx
@@ -29,9 +34,12 @@ from logger import log
 
 
 # ==========================================
-# VERTEX TOKEN HELPER
+# TOKEN / CLIENT HELPERS
 # ==========================================
-def get_vertex_token():
+def _get_vertex_token():
+    """Obtain a short-lived OAuth2 token for Vertex AI."""
+    import google.oauth2.service_account
+    import google.auth.transport.requests
     creds = google.oauth2.service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE,
         scopes=["https://www.googleapis.com/auth/cloud-platform"]
@@ -40,32 +48,55 @@ def get_vertex_token():
     return creds.token
 
 
+def _build_client() -> OpenAI:
+    """
+    Return an OpenAI-compatible client pointed at the configured backend.
+
+    - "google" : Google AI (Gemini) OpenAI-compatible endpoint, authenticated
+                 with a static API key.
+    - "vertex" : Vertex AI OpenAI-compatible endpoint, authenticated with a
+                 short-lived OAuth2 token derived from a service-account file.
+    """
+    if BACKEND == "google":
+        return OpenAI(
+            base_url=GOOGLE_BASE_URL,
+            api_key=GOOGLE_API_KEY,
+            timeout=120.0,
+        )
+    else:  # "vertex"
+        return OpenAI(
+            base_url=VERTEX_BASE_URL,
+            api_key=_get_vertex_token(),
+            timeout=120.0,
+        )
+
+
 # ==========================================
 # BASE AGENT
 # ==========================================
 class _BaseAgent:
-    def __init__(self, model_path, gpu_id, is_master):
+    def __init__(self, model_path: str, gpu_id: int, is_master: bool):
         self.gpu_id     = gpu_id
         self.is_master  = is_master
         self.model_name = model_path
-        role = "MASTER" if is_master else "WORKER"
-        print(f"[{role} GPU {gpu_id}] Vertex AI endpoint (model={model_path})")
+        role    = "MASTER" if is_master else "WORKER"
+        backend = BACKEND.upper()
+        print(f"[{role} GPU {gpu_id}] Backend={backend}  model={model_path}")
 
-    def _get_client(self):
-        return OpenAI(
-            base_url=VERTEX_BASE_URL,
-            api_key=get_vertex_token(),
-            timeout=120.0,
-        )
-
+    # ------------------------------------------------------------------
+    # Image helpers
+    # ------------------------------------------------------------------
     @staticmethod
-    def _pil_to_b64(img):
+    def _pil_to_b64(img) -> str:
         if not isinstance(img, Image.Image):
             img = Image.fromarray(img)
         buf = io.BytesIO()
         img.save(buf, format="JPEG", quality=90)
         return base64.b64encode(buf.getvalue()).decode()
 
+    # ------------------------------------------------------------------
+    # Message conversion
+    # ------------------------------------------------------------------
     def _to_oai_messages(self, messages):
         oai = []
         for msg in messages:
@@ -87,7 +118,11 @@ class _BaseAgent:
                 oai.append({"role": role, "content": parts})
         return oai
 
-    def _generate(self, messages, tools=None, max_tokens=2048, thinking=False):
+    # ------------------------------------------------------------------
+    # Core generation
+    # ------------------------------------------------------------------
+    def _generate(self, messages, tools=None, max_tokens: int = 2048,
+                  thinking: bool = False) -> str:
         oai_messages = self._to_oai_messages(messages)
         kwargs = dict(
             model=self.model_name,
@@ -102,7 +137,8 @@ class _BaseAgent:
 
         for attempt in range(6):
             try:
-                response = self._get_client().chat.completions.create(**kwargs)
+                client   = _build_client()          # re-built each call (token may expire)
+                response = client.chat.completions.create(**kwargs)
                 usage    = response.usage
                 if usage:
                     metrics.add_call(usage.prompt_tokens, usage.completion_tokens,
@@ -127,11 +163,12 @@ class _BaseAgent:
                 return msg_out.content or ""
 
             except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                err = str(e)
+                if "429" in err or "RESOURCE_EXHAUSTED" in err:
                     wait = (2 ** attempt) + random.uniform(0, 1)
                     print(f"[429] Attempt {attempt+1}/6, retrying in {wait:.1f}s")
                     time.sleep(wait)
-                elif "NoneType" in str(e) or "choices" in str(e) or "message is None" in str(e):
+                elif "NoneType" in err or "choices" in err or "message is None" in err:
                     wait = (2 ** attempt) + random.uniform(0, 1)
                     print(f"[None response] Attempt {attempt+1}/6, retrying in {wait:.1f}s — {e}")
                     time.sleep(wait)
@@ -140,7 +177,10 @@ class _BaseAgent:
 
         raise RuntimeError("Max retries exceeded")
 
-    def _parse_single_tc(self, json_str):
+    # ------------------------------------------------------------------
+    # Parsing helpers
+    # ------------------------------------------------------------------
+    def _parse_single_tc(self, json_str: str) -> dict:
         parsed    = json.loads(json_str)
         action    = parsed.get("name", parsed.get("action", ""))
         arguments = parsed.get("arguments", {})
@@ -151,7 +191,7 @@ class _BaseAgent:
             result.update(arguments)
         return result
 
-    def _parse_tool_calls(self, output_text):
+    def _parse_tool_calls(self, output_text: str) -> list:
         clean = output_text.strip()
         if "<tool_call>" in clean:
             matches = re.findall(r'<tool_call>(.*?)</tool_call>', clean, re.DOTALL)
@@ -162,7 +202,7 @@ class _BaseAgent:
             return [self._parse_single_tc(clean[start:end])]
         raise ValueError("No tool call found")
 
-    def _parse_json(self, output_text):
+    def _parse_json(self, output_text: str) -> dict:
         clean = output_text.strip()
         if "```json" in clean:
             clean = clean.split("```json")[1].split("```")[0]
@@ -170,7 +210,11 @@ class _BaseAgent:
             parts = clean.split("```")
             if len(parts) >= 2:
                 clean = parts[1]
-        start, end = clean.find('{'), clean.rfind('}') + 1
+        clean = clean.strip()
+        start = clean.find('{')
+        end   = clean.rfind('}') + 1
+        if start == -1 or end == 0:
+            raise ValueError(f"No JSON object found in output: {output_text[:200]!r}")
         return json.loads(clean[start:end])
 
 
@@ -178,10 +222,10 @@ class _BaseAgent:
 # MASTER AGENT
 # ==========================================
 class MasterAgent(_BaseAgent):
-    def __init__(self, gpu_id=0):
+    def __init__(self, gpu_id: int = 0):
         super().__init__(MASTER_MODEL_PATH, gpu_id, is_master=True)
 
-    def check_sufficiency(self, query, scratchpad):
+    def check_sufficiency(self, query: str, scratchpad) -> str:
         evidence_img, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
         evidence_text = "\n".join(cell_descs)
 
@@ -203,17 +247,26 @@ Has the search task been completed? Reply with ONLY "yes" or "no"."""
         output = self._generate(messages, tools=None, max_tokens=2048, thinking=True)
         return "yes" if "yes" in output.lower() else "no"
 
-    def final_decide(self, query, scratchpad, candidates=None):
+    def final_decide(self, query: str, scratchpad, candidates=None) -> dict:
         evidence_img, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
         evidence_text = "\n".join(cell_descs)
+        last_letter   = _idx_to_letter(len(cell_descs) - 1)
 
-        candidates_section       = ""
-        elimination_instruction  = ""
         if candidates:
-            candidates_str           = "\n".join([f"  {i}: {c}" for i, c in enumerate(candidates)])
-            candidates_section       = f"\n**ANSWER CHOICES:**\n{candidates_str}"
-            last_letter              = _idx_to_letter(len(cell_descs) - 1)
-            elimination_instruction  = f"""
+            # ── Multiple-choice mode ──────────────────────────────────
+            candidates_str = "\n".join([f"  {i}: {c}" for i, c in enumerate(candidates)])
+            prompt = f"""**FINAL DECISION**
+
+You are answering a question about a SINGLE video.
+
+**QUERY:** "{query}"
+
+**ANSWER CHOICES:**
+{candidates_str}
+
+**EVIDENCE (sorted by timestamp — [A] is earliest, [{last_letter}] is latest):**
+{evidence_text}
+
 **CRITICAL: Use ONLY the evidence above. Do NOT use your own knowledge.**
 
 **STEP-BY-STEP:**
@@ -222,44 +275,95 @@ Has the search task been completed? Reply with ONLY "yes" or "no"."""
    - Which evidence items [by letter] support it?
    - Which contradict it?
    - Verdict: SUPPORTED, UNSUPPORTED, or CONTRADICTED
-3. Pick the SUPPORTED candidate with the strongest and most direct video evidence."""
+3. Pick the SUPPORTED candidate with the strongest and most direct video evidence.
 
-        last_letter = _idx_to_letter(len(cell_descs) - 1)
-        prompt = f"""**FINAL DECISION**
+**OUTPUT (raw JSON — reason FIRST, then answer):**
+{{"reasoning": "<step-by-step reasoning>", "answer": "<your answer>", "choice": <index>}}"""
+
+        else:
+            # ── Open-ended mode ───────────────────────────────────────
+            prompt = f"""**FINAL ANSWER**
 
 You are answering a question about a SINGLE video.
 
 **QUERY:** "{query}"
-{candidates_section}
 
 **EVIDENCE (sorted by timestamp — [A] is earliest, [{last_letter}] is latest):**
 {evidence_text}
-{elimination_instruction}
+
+**CRITICAL: Base your answer ONLY on the evidence above. Do NOT use your own knowledge.**
+
+**STEP-BY-STEP:**
+1. Review what each evidence item shows and what it tells you.
+2. Synthesise the evidence into a clear, direct answer to the query.
+3. If the evidence is insufficient, say so and explain what was found.
 
 **OUTPUT (raw JSON — reason FIRST, then answer):**
-{{"reasoning": "<step-by-step reasoning>", "answer": "<your answer>", "choice": <index>}}"""
+{{"reasoning": "<step-by-step reasoning>", "answer": "<your complete answer>"}}"""
 
         messages = [{"role": "user", "content": [
             {"type": "image", "image": evidence_img},
             {"type": "text",  "text":  prompt}
         ]}]
         output = self._generate(messages, tools=None, max_tokens=8096, thinking=True)
-        return self._parse_json(output)
 
-    def uncertainty_analysis(self, query, scratchpad, candidates, grid_img,
-                              cell_info, progress_text, num_suggestions):
+        result = None
+        try:
+            result = self._parse_json(output)
+        except Exception as e:
+            log(f"[MASTER] final_decide parse failed: {e}, retrying...")
+
+        for attempt in range(MAX_PROBE_RETRIES):
+            if result is not None:
+                break
+            fix_prompt = f"""Fix this malformed JSON and return ONLY valid JSON.
+
+Expected: {{"reasoning": "<str>", "answer": "<str>", "choice": <int or omit if open-ended>}}
+
+Broken output:
+{output[:3000]}
+
+**OUTPUT (valid JSON only):**"""
+            fix_msgs = [{"role": "user", "content": fix_prompt}]
+            fixed    = self._generate(fix_msgs, tools=None, max_tokens=2048, thinking=True)
+            try:
+                result = self._parse_json(fixed)
+                log(f"[MASTER] final_decide JSON repair attempt {attempt+1} succeeded")
+            except Exception as e2:
+                log(f"[MASTER] final_decide repair attempt {attempt+1}/{MAX_PROBE_RETRIES} failed: {e2}")
+                output = fixed
+
+        if result is None:
+            log("[MASTER] final_decide: all retries failed, returning raw answer text")
+            result = {"reasoning": "JSON parse failed after retries", "answer": output.strip()}
+
+        result.setdefault("choice", -1)
+        return result
+
+    def uncertainty_analysis(self, query: str, scratchpad, candidates, grid_img,
+                              cell_info, progress_text: str, num_suggestions: int) -> dict:
         from navigator import build_context_str
         evidence_img, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
-        evidence_text  = "\n".join(cell_descs)
-        candidates_str = "\n".join([f"  {i}: {c}" for i, c in enumerate(candidates)])
-        context_str    = build_context_str(cell_info)
+        evidence_text = "\n".join(cell_descs)
+        context_str   = build_context_str(cell_info)
+
+        if candidates:
+            # ── Multiple-choice mode ──────────────────────────────────
+            candidates_str    = "\n".join([f"  {i}: {c}" for i, c in enumerate(candidates)])
+            task_section      = f"**ANSWER CHOICES:**\n{candidates_str}"
+            uncertainty_task  = "1. **UNCERTAINTY CHECK:** Which choices still lack sufficient evidence?"
+            finish_condition  = "**If ALL choices are covered, output:**"
+        else:
+            # ── Open-ended mode ───────────────────────────────────────
+            task_section      = "*(Open-ended question — no fixed answer choices)*"
+            uncertainty_task  = "1. **UNCERTAINTY CHECK:** Does the evidence collected so far fully answer the query, or are key parts still missing?"
+            finish_condition  = "**If the evidence is sufficient to give a complete answer, output:**"
 
         prompt = f"""**UNCERTAINTY ANALYSIS**
 
 **QUERY:** "{query}"
 
-**ANSWER CHOICES:**
-{candidates_str}
+{task_section}
 
 **EVIDENCE COLLECTED SO FAR:**
 {evidence_text}
@@ -271,11 +375,11 @@ You are answering a question about a SINGLE video.
 {context_str}
 
 **YOUR 3 TASKS:**
-1. **UNCERTAINTY CHECK:** Which choices still lack sufficient evidence?
+{uncertainty_task}
 2. **EXPLORE SUGGESTIONS:** Suggest up to {num_suggestions} regions to explore next (non-blacked cells only).
 3. **ERASE NOISE:** List evidence letters to remove if completely unrelated to the query.
 
-**If ALL choices are covered, output:**
+{finish_condition}
 {{"reasoning": "<why>", "action": "FINAL_DECISION"}}
 
 **Otherwise output:**
@@ -323,7 +427,11 @@ Broken:
             log("[MASTER] All retries failed, defaulting to CONTINUE")
             result = {"action": "CONTINUE", "reasoning": "parse error", "explore": [], "erase": []}
 
-        result["action"] = "FINAL_DECISION" if result.get("action", "").upper() == "FINAL_DECISION" else "CONTINUE"
+        result["action"] = (
+            "FINAL_DECISION"
+            if result.get("action", "").upper() == "FINAL_DECISION"
+            else "CONTINUE"
+        )
         result.setdefault("explore", [])
         result.setdefault("erase", [])
         result.setdefault("reasoning", "")
@@ -334,5 +442,5 @@ Broken:
 # WORKER AGENT
 # ==========================================
 class WorkerAgent(_BaseAgent):
-    def __init__(self, gpu_id=0):
+    def __init__(self, gpu_id: int = 0):
         super().__init__(WORKER_MODEL_PATH, gpu_id, is_master=False)

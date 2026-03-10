@@ -36,7 +36,7 @@ from PIL import Image, ImageDraw, ImageFont
 # ==========================================
 HEADER_HEIGHT    = 72
 MAIN_WIDTH       = 1024   # left panel (main frame)
-SCRATCHPAD_WIDTH = 400    # right panel (live scratchpad)
+SCRATCHPAD_WIDTH = 520    # right panel (live scratchpad + reasoning)
 OUTPUT_WIDTH     = MAIN_WIDTH + SCRATCHPAD_WIDTH
 
 
@@ -106,61 +106,180 @@ def _get_font(size):
     return ImageFont.load_default()
 
 
+
 # ==========================================
-# SCRATCHPAD PANEL
+# REASONING SIDECAR LOADER
 # ==========================================
+def _load_reasoning_for_scratchpad(scratchpad_img_path):
+    """
+    Given a path like  .../0042_scratchpad_5items.jpg
+    look for           .../0042_scratchpad_5items_reasoning.json
+    Returns list of dicts or [] if not found.
+    """
+    if scratchpad_img_path is None:
+        return []
+    p    = Path(scratchpad_img_path)
+    json_path = p.parent / (p.stem + "_reasoning.json")
+    if not json_path.exists():
+        return []
+    try:
+        with open(json_path, encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return []
+
 _SCRATCHPAD_LABEL_COLOR = (200, 230, 200)
 _SCRATCHPAD_BG          = (20, 20, 20)
 _SCRATCHPAD_TITLE_BG    = (40, 80, 40)
 
 
+_REASONING_BG    = (30, 30, 30)
+_REASONING_FG    = (210, 210, 210)
+_REASONING_HL    = (130, 230, 130)   # letter + timestamp highlight
+_CONF_HIGH       = (80,  200, 80)    # confidence ≥ 0.85
+_CONF_MED        = (200, 200, 80)    # confidence ≥ 0.70
+_CONF_LOW        = (200, 100, 80)    # confidence < 0.70
+_DIVIDER_COLOR   = (60,  60,  60)
+
+
+def _wrap_text(text, font, max_width, draw):
+    """Split *text* into lines that fit within *max_width* pixels."""
+    words = text.split()
+    lines, current = [], ""
+    for word in words:
+        trial = (current + " " + word).strip()
+        w     = draw.textlength(trial, font=font)
+        if w <= max_width:
+            current = trial
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines or [""]
+
+
 def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h):
     """
     Build a fixed-size scratchpad panel (numpy BGR array).
-    If scratchpad_img_path is None, shows a placeholder message.
+
+    Layout (top → bottom):
+      ┌─────────────────────────┐
+      │  title bar (30 px)      │
+      ├─────────────────────────┤
+      │  scratchpad grid image  │  (≤ 45 % of panel height)
+      ├─────────────────────────┤
+      │  per-item reasoning     │  (remaining space, scrolled to latest)
+      └─────────────────────────┘
     """
     panel = np.full((panel_h, panel_w, 3), _SCRATCHPAD_BG, dtype=np.uint8)
 
-    # Title bar
+    # ── title bar ──────────────────────────────────────────────────
     title_h = 30
     panel[:title_h, :] = _SCRATCHPAD_TITLE_BG
 
     pil  = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil)
-    font = _get_font(18)
+    font_title  = _get_font(17)
+    font_item   = _get_font(13)
+    font_small  = _get_font(11)
 
     if scratchpad_img_path is None:
-        draw.text((8, 7), "SCRATCHPAD  (no evidence yet)", font=font,
-                  fill=_SCRATCHPAD_LABEL_COLOR)
+        draw.text((8, 7), "SCRATCHPAD  (no evidence yet)",
+                  font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
         return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
-    # Extract item count from filename for the title
     m       = re.search(r'scratchpad_(\d+)items', Path(scratchpad_img_path).stem)
     n_items = m.group(1) if m else "?"
-    draw.text((8, 7), f"SCRATCHPAD  ({n_items} evidence items)", font=font,
-              fill=_SCRATCHPAD_LABEL_COLOR)
+    draw.text((8, 7), f"SCRATCHPAD  ({n_items} evidence items)",
+              font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
     panel = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
-    # Load the scratchpad image and fit it below the title bar
+    # ── scratchpad grid image ──────────────────────────────────────
     sp_img = cv2.imread(str(scratchpad_img_path))
-    if sp_img is None:
+    img_section_h = 0
+    if sp_img is not None:
+        max_img_h  = int(panel_h * 0.40)
+        h, w       = sp_img.shape[:2]
+        scale      = min(panel_w / w, max_img_h / h)
+        new_w      = int(w * scale)
+        new_h      = int(h * scale)
+        sp_resized = cv2.resize(sp_img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        x_off      = (panel_w - new_w) // 2
+        y_off      = title_h
+        panel[y_off:y_off + new_h, x_off:x_off + new_w] = sp_resized
+        img_section_h = new_h
+
+    # ── reasoning section ──────────────────────────────────────────
+    reasoning_items = _load_reasoning_for_scratchpad(scratchpad_img_path)
+    reasoning_y     = title_h + img_section_h + 4
+
+    # thin divider between image and text
+    if img_section_h > 0 and reasoning_items:
+        panel[reasoning_y - 2:reasoning_y, :] = _DIVIDER_COLOR
+
+    if not reasoning_items:
         return panel
 
-    avail_h = panel_h - title_h
-    avail_w = panel_w
+    # Convert panel to PIL for text rendering
+    pil2  = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
+    draw2 = ImageDraw.Draw(pil2)
 
-    h, w  = sp_img.shape[:2]
-    scale = min(avail_w / w, avail_h / h)
-    new_w = int(w * scale)
-    new_h = int(h * scale)
-    sp_resized = cv2.resize(sp_img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+    # Build all lines first so we can clip to the bottom (show most recent)
+    ITEM_MARGIN  = 6    # px between items
+    LINE_H_ITEM  = 16   # px per line for description
+    LINE_H_SMALL = 13   # px per line for subtitle
+    PAD_X        = 6
 
-    # Centre horizontally
-    x_off = (avail_w - new_w) // 2
-    y_off = title_h
-    panel[y_off:y_off + new_h, x_off:x_off + new_w] = sp_resized
+    all_blocks = []   # list of (lines_to_draw: [(text, color, font)], block_h)
 
-    return panel
+    for item in reasoning_items:
+        letter  = item.get("letter", "?")
+        t       = item.get("time", 0.0)
+        conf    = item.get("confidence", 0.0)
+        desc    = item.get("description", "")
+        sub     = item.get("subtitle", "")
+
+        conf_color = _CONF_HIGH if conf >= 0.85 else (_CONF_MED if conf >= 0.70 else _CONF_LOW)
+
+        header_text  = f"[{letter}] @{t:.1f}s  conf={conf:.2f}"
+        desc_lines   = _wrap_text(desc, font_item, panel_w - PAD_X * 2, draw2)
+        sub_lines    = _wrap_text(f"♪ {sub}", font_small, panel_w - PAD_X * 2, draw2) if sub else []
+
+        block_lines = [(header_text, conf_color, font_item)]
+        for dl in desc_lines:
+            block_lines.append((dl, _REASONING_FG, font_item))
+        for sl in sub_lines:
+            block_lines.append((sl, (140, 160, 200), font_small))
+
+        block_h = (len(block_lines) * LINE_H_ITEM) + ITEM_MARGIN
+        all_blocks.append((block_lines, block_h))
+
+    # Measure total height; if overflow, skip oldest blocks to show recent ones
+    avail_h     = panel_h - reasoning_y - 4
+    total_h     = sum(bh for _, bh in all_blocks)
+    start_block = 0
+    if total_h > avail_h:
+        running = 0
+        for i, (_, bh) in enumerate(all_blocks):
+            running += bh
+            if running >= total_h - avail_h:
+                start_block = i
+                break
+
+    cur_y = reasoning_y + 4
+    for block_lines, block_h in all_blocks[start_block:]:
+        if cur_y + block_h > panel_h - 2:
+            break
+        for line_text, line_color, line_font in block_lines:
+            draw2.text((PAD_X, cur_y), line_text, font=line_font, fill=line_color)
+            cur_y += LINE_H_ITEM
+        # small divider between items
+        draw2.line([(PAD_X, cur_y), (panel_w - PAD_X, cur_y)], fill=_DIVIDER_COLOR, width=1)
+        cur_y += ITEM_MARGIN
+
+    return cv2.cvtColor(np.array(pil2), cv2.COLOR_RGB2BGR)
 
 
 # ==========================================
@@ -281,15 +400,18 @@ def format_result_info(result):
 # ==========================================
 # H.264 RE-ENCODE
 # ==========================================
-def _reencode_h264(input_path, output_path):
+def _reencode_h264(input_path, output_path, end_hold_seconds=4):
     import subprocess
+    # tpad=stop_mode=clone:stop_duration=N freezes the last frame for N seconds
+    vf = f"tpad=stop_mode=clone:stop_duration={end_hold_seconds}"
     cmd = (
         f'ffmpeg -y -i "{input_path}" '
+        f'-vf "{vf}" '
         f'-c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p '
         f'-an -movflags +faststart '
         f'"{output_path}"'
     )
-    print("  Re-encoding to H.264 with ffmpeg...")
+    print(f"  Re-encoding to H.264 with ffmpeg (+ {end_hold_seconds}s end freeze)...")
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     if result.returncode != 0:
         print(f"  [!] ffmpeg re-encode failed:\n{result.stderr[-400:]}")

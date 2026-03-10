@@ -5,26 +5,61 @@ Edit these values to control model paths, exploration behavior, and debug output
 
 import os
 import json
+from dotenv import load_dotenv
+load_dotenv()
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+# ==========================================
+# BACKEND SELECTION
+# ==========================================
+# Set to "google" to use Google AI API (Gemini API key)
+# Set to "vertex" to use Vertex AI (service account JSON)
+BACKEND = "google"   # "google" or "vertex"
+
+# ==========================================
+# GOOGLE AI API SETTINGS (used when BACKEND = "google")
+# ==========================================
+GOOGLE_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 # ==========================================
 # MODEL CONFIGURATION
 # ==========================================
-MASTER_MODEL_PATH = "google/gemini-3-flash-preview"
-WORKER_MODEL_PATH = "google/gemini-3-flash-preview"
+# Vertex AI model paths
+VERTEX_MASTER_MODEL_PATH = "google/gemini-3-flash-preview"
+VERTEX_WORKER_MODEL_PATH = "google/gemini-3-flash-preview"
+
+# Google AI model names
+GOOGLE_MASTER_MODEL_PATH = "models/gemini-3-flash-preview"
+GOOGLE_WORKER_MODEL_PATH = "models/gemini-3-flash-preview"
+
+# Resolved at runtime based on BACKEND
+MASTER_MODEL_PATH = GOOGLE_MASTER_MODEL_PATH if BACKEND == "google" else VERTEX_MASTER_MODEL_PATH
+WORKER_MODEL_PATH = GOOGLE_WORKER_MODEL_PATH if BACKEND == "google" else VERTEX_WORKER_MODEL_PATH
 
 # ==========================================
-# VERTEX AI / GCP SETTINGS
+# VERTEX AI / GCP SETTINGS (used when BACKEND = "vertex")
 # ==========================================
-with open("vertex_key.json") as f:
-    PROJECT_ID = json.load(f)["project_id"]
-
-LOCATION   = "global"                        # gemini-3-flash-preview requires global
 SERVICE_ACCOUNT_FILE = "vertex_key.json"
 
-VERTEX_BASE_URL = (
-    f"https://aiplatform.googleapis.com/v1/projects/{PROJECT_ID}"
-    f"/locations/{LOCATION}/endpoints/openapi"
-)
+def _load_vertex_config():
+    if BACKEND == "vertex":
+        if not os.path.isfile(SERVICE_ACCOUNT_FILE):
+            raise FileNotFoundError(
+                f"Vertex AI backend selected but '{SERVICE_ACCOUNT_FILE}' not found. "
+                "Either set BACKEND='google' or provide a valid service account file."
+            )
+        with open(SERVICE_ACCOUNT_FILE) as f:
+            project_id = json.load(f)["project_id"]
+        location   = "global"
+        base_url   = (
+            f"https://aiplatform.googleapis.com/v1/projects/{project_id}"
+            f"/locations/{location}/endpoints/openapi"
+        )
+        return project_id, location, base_url
+    return None, None, None
+
+PROJECT_ID, LOCATION, VERTEX_BASE_URL = _load_vertex_config()
 
 # ==========================================
 # OUTPUT
@@ -35,7 +70,7 @@ DEBUG = True                 # True = verbose output to log file and console
 # ==========================================
 # EXPLORATION SETTINGS
 # ==========================================
-NUM_GPUS        = 4
+NUM_GPUS        = 4          # Number of Agent to use for parallel exploration
 GRID_K          = 8          # Grid size: GRID_K x GRID_K cells
 EXPLORE_MODE    = "dfs"      # "auto", "bfs", or "dfs"
 

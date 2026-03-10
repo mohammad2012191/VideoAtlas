@@ -2,10 +2,13 @@
 memory.py — Visual scratchpad, negative memory, and navigation state.
 """
 
+import json
+import os
 import cv2
 import numpy as np
 from PIL import Image
 from config import INCLUDE_DESC_IN_SCRATCHPAD
+import logger as _logger
 from logger import log, save_debug_image
 
 
@@ -29,6 +32,53 @@ def _letter_to_idx(letter):
     for ch in letter.upper():
         result = result * 26 + (ord(ch) - ord('A') + 1)
     return result - 1
+
+
+# ==========================================
+# SCRATCHPAD REASONING SIDECAR
+# ==========================================
+def _save_scratchpad_reasoning(n_items: int, evidence: list, descriptions: list):
+    """
+    Save a sidecar JSON next to the scratchpad image so visualize_run.py
+    can render per-item reasoning in the scratchpad panel.
+
+    The JSON filename mirrors the image filename that save_debug_image() just wrote.
+    Because save_debug_image() incremented the counter before writing, the current
+    sequence number is _global_counter (already bumped).
+
+    File: <debug_dir>/<seq>_scratchpad_<n>items_reasoning.json
+    Schema:
+      [
+        {
+          "letter":      "A",
+          "time":        12.3,
+          "confidence":  0.9,
+          "description": "...",
+          "subtitle":    "..."
+        },
+        ...
+      ]
+    """
+    if _logger._debug_dir is None:
+        return
+    try:
+        seq      = _logger._global_counter          # live value after save_debug_image()
+        filename = f"{seq:04d}_scratchpad_{n_items}items_reasoning.json"
+        path     = os.path.join(_logger._debug_dir, filename)
+        items = []
+        for i, e in enumerate(evidence):
+            items.append({
+                "letter":      _idx_to_letter(i),
+                "time":        round(e['time'], 3),
+                "confidence":  e['conf'],
+                "description": e['desc'],
+                "subtitle":    e.get('subtitle', ''),
+            })
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(items, f, ensure_ascii=False, indent=2)
+        log(f"[SCRATCHPAD] Reasoning saved: {path}")
+    except Exception as ex:
+        log(f"[SCRATCHPAD] Failed to save reasoning JSON: {ex}")
 
 
 # ==========================================
@@ -138,6 +188,10 @@ class VisualScratchpad:
         rows    = [np.hstack(frames[r * grid_cols:(r + 1) * grid_cols]) for r in range(grid_rows)]
         pil_img = Image.fromarray(np.vstack(rows))
         save_debug_image(pil_img, f"scratchpad_{n_items}items")
+
+        # Save sidecar JSON with per-item reasoning so visualize_run.py can overlay it
+        _save_scratchpad_reasoning(n_items, self.evidence, descriptions)
+
         return pil_img, descriptions
 
 

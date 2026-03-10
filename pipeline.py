@@ -12,7 +12,7 @@ from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from config import (
-    GRID_K, NUM_GPUS, EXPLORE_MODE,
+    GRID_K, NUM_WORKERS, EXPLORE_MODE,
     NUM_CALLS, BUDGET_PER_CELL, DFS_MAX_DEPTH,
     BFS_MAX_DEPTH, BFS_BUDGET, BFS_MAX_PROMISING,
     MIN_EXPAND_SPAN, SUFFICIENCY_EVERY_K

@@ -18,7 +18,7 @@ import sys
 import json
 import time
 
-from config import NUM_GPUS, OUTPUT_DIR
+from config import NUM_WORKERS, OUTPUT_DIR
 from logger import setup_logger, log, close_logger
 from metrics import metrics
 from agents import MasterAgent, WorkerAgent
@@ -148,11 +148,11 @@ def main():
         query = f"In the given video, {question}"
 
     # Instantiate agents
-    print(f"\nLoading agents (NUM_GPUS={NUM_GPUS})...")
+    print(f"\nLoading agents (NUM_WORKERS={NUM_WORKERS})...")
     t0           = time.time()
     master_agent = MasterAgent(gpu_id=0)
     worker_agents = {}
-    for gpu_id in range(1, NUM_GPUS):
+    for gpu_id in range(1, NUM_WORKERS):
         worker_agents[gpu_id] = WorkerAgent(gpu_id=gpu_id)
     print(f"Agents ready in {time.time() - t0:.1f}s\n")
 

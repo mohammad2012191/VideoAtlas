@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from config import (
     GRID_K, BUDGET_PER_CELL, PLATEAU, INVESTIGATE_SPAN,
     BFS_BUDGET, BFS_MAX_PROMISING, BFS_MAX_EVIDENCE,
-    MIN_EXPAND_SPAN, MAX_PROBE_RETRIES, NUM_GPUS
+    MIN_EXPAND_SPAN, MAX_PROBE_RETRIES, NUM_WORKERS
 )
 from models import CellState, EvidenceItem, WorkerReport, BFSItem, BFSWorkerReport
 from memory import NavigationState, NavigationStack
@@ -48,7 +48,7 @@ def _try_parse_ratings(agent, output):
 
 def probe_cells(agent, grid_img, cell_info, query, top_n=None):
     if top_n is None:
-        top_n = NUM_GPUS
+        top_n = NUM_WORKERS
     context_str = build_context_str(cell_info)
 
     prompt = f"""You are analyzing a {GRID_K}x{GRID_K} grid of frames from a SINGLE video (chronological left-to-right, top-to-bottom).

@@ -70,7 +70,7 @@ DEBUG = True                 # True = verbose output to log file and console
 # ==========================================
 # EXPLORATION SETTINGS
 # ==========================================
-NUM_GPUS        = 4          # Number of Agent to use for parallel exploration
+NUM_WORKERS     = 4          # Number of Agent to use for parallel exploration
 GRID_K          = 8          # Grid size: GRID_K x GRID_K cells
 EXPLORE_MODE    = "dfs"      # "auto", "bfs", or "dfs"
 

@@ -158,7 +158,7 @@ Key parameters in `config.py`:
 | `NUM_CALLS` | Total VLM call budget | `512` |
 | `BUDGET_PER_CELL` | Steps per worker per cell | `8` |
 | `DFS_MAX_DEPTH` | Max exploration depth (`"auto"` = stop at <1s span) | `"auto"` |
-| `NUM_GPUS` | Number of parallel workers | `4` |
+| `NUM_WORKERS` | Number of parallel workers | `4` |
 
 ---
 

@@ -395,7 +395,7 @@ Broken output:
 
         messages = [{"role": "user", "content": content_parts}]
         output   = self._generate(messages, tools=None, max_tokens=2048)
-        log(f"[MASTER] Uncertainty raw: {output[:300]}")
+        log(f"[MASTER] Uncertainty raw: {output}")
 
         result = None
         try:

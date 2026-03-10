@@ -70,7 +70,7 @@ For each cell briefly explain WHY it is promising, then give its ID.
     ]}]
 
     output = agent._generate(messages, tools=None, max_tokens=2048)
-    log(f"[PROBE] Raw: {output[:200]}")
+    log(f"[PROBE] Raw: {output}")
     try:
         return _try_parse_ratings(agent, output)
     except Exception as e:
@@ -128,7 +128,7 @@ If you can already find what the search task asks for:
     for step in range(3):
         try:
             output    = agent._generate(messages, tools=master_tools, max_tokens=2048)
-            log(f"[MASTER] Step {step} RAW: {output[:200]}...")
+            log(f"[MASTER] Step {step} RAW: {output}...")
             decisions = agent._parse_tool_calls(output)
             log(f"[MASTER] Step {step} PARSED: {[d.get('action') for d in decisions]}")
         except Exception as e:
@@ -155,7 +155,7 @@ If you can already find what the search task asks for:
                     conf      = item.get('confidence', 0.75)
                     frame_img = Image.fromarray(nav.get_frame(ts))
                     evidence.append(EvidenceItem(ts, desc, conf, frame_img))
-                    log(f"[MASTER] EVIDENCE: @{ts:.1f}s conf={conf} '{desc[:60]}'")
+                    log(f"[MASTER] EVIDENCE: @{ts:.1f}s conf={conf} '{desc}'")
                 master_found_evidence = True
             elif action == "FINISHED":
                 log(f"[MASTER] FINISHED (evidence={len(evidence)})")
@@ -223,7 +223,7 @@ Select the best action."""
 
         try:
             output    = agent._generate(messages, tools=step_tools, max_tokens=2048)
-            log(f"  {tag} Step {step} RAW: {output[:200]}...")
+            log(f"  {tag} Step {step} RAW: {output}...")
             decisions = agent._parse_tool_calls(output)
             log(f"  {tag} Step {step} PARSED: {[d.get('action') for d in decisions]}")
         except Exception as e:
@@ -310,7 +310,7 @@ Description: '<what you observe>. This helps because <reason>.'"""
                     if direction == "after"
                     else max(anchor_ts - INVESTIGATE_SPAN / 2, 1)
                 )
-                log(f"  {tag} INVESTIGATE {direction} @{anchor_ts:.1f}s: {reason[:60]}")
+                log(f"  {tag} INVESTIGATE {direction} @{anchor_ts:.1f}s: {reason}")
                 inv_grid, inv_info, _, _ = nav.generate_grid_view(inv_center, INVESTIGATE_SPAN)
                 inv_context = build_context_str(inv_info)
 
@@ -371,7 +371,7 @@ If nothing answers the question, call FINISHED."""
                     frame_img = Image.fromarray(nav.get_frame(ts))
                     evidence.append(EvidenceItem(ts, desc, conf, frame_img))
                     evidence_this_step = True
-                    log(f"  {tag} EVIDENCE: @{ts:.1f}s conf={conf} '{desc[:60]}'")
+                    log(f"  {tag} EVIDENCE: @{ts:.1f}s conf={conf} '{desc}'")
                 step_actions.append(f"Saved {len(decision.get('items', []))} evidence items")
 
             elif action == "MARK_PROMISING":
@@ -460,7 +460,7 @@ Select the best action."""
 
         try:
             output    = agent._generate(messages, tools=bfs_tools, max_tokens=2048)
-            log(f"  {tag} Step {step} RAW: {output[:200]}...")
+            log(f"  {tag} Step {step} RAW: {output}...")
             decisions = agent._parse_tool_calls(output)
             log(f"  {tag} Step {step} PARSED: {[d.get('action') for d in decisions]}")
         except Exception as e:
@@ -504,7 +504,7 @@ Select the best action."""
                     conf = item.get('confidence', 0.75)
                     frame_img = Image.fromarray(nav.get_frame(ts))
                     evidence.append(EvidenceItem(ts, desc, conf, frame_img))
-                    log(f"  {tag} EVIDENCE: @{ts:.1f}s conf={conf} '{desc[:60]}'")
+                    log(f"  {tag} EVIDENCE: @{ts:.1f}s conf={conf} '{desc}'")
                 step_actions.append(f"Saved evidence")
 
             elif action == "MARK_PROMISING":

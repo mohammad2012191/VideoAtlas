@@ -15,7 +15,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 # ==========================================
 # Set to "google" to use Google AI API (Gemini API key)
 # Set to "vertex" to use Vertex AI (service account JSON)
-BACKEND = "google"   # "google" or "vertex"
+BACKEND = "vertex"   # "google" or "vertex"
 
 # ==========================================
 # GOOGLE AI API SETTINGS (used when BACKEND = "google")

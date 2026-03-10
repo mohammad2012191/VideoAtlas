@@ -144,7 +144,7 @@ class VisualScratchpad:
         removed = [e for i, e in enumerate(self.evidence) if i not in keep_set]
         self.evidence = [e for i, e in enumerate(self.evidence) if i in keep_set]
         for e in removed:
-            log(f"[SCRATCHPAD] Erased @{e['time']:.1f}s: {e['desc'][:40]}...")
+            log(f"[SCRATCHPAD] Erased @{e['time']:.1f}s: {e['desc']}...")
         log(f"[SCRATCHPAD] Pruned: kept {len(self.evidence)}, removed {len(removed)}")
 
     def generate_evidence_grid(self, cell_size=256):

@@ -44,7 +44,7 @@ Output ONLY the search task, no prefix:"""
     if len(task) < 15:
         log("[TASK] Failed to extract task, skipping")
         return query, ""
-    log(f"[TASK] Original: {query[:100]}...")
+    log(f"[TASK] Original: {query}...")
     log(f"[TASK] Search task: {task}")
     return query, task
 
@@ -64,7 +64,7 @@ Answer with ONLY "DFS" or "BFS":"""
 
     output = agent._generate([{"role": "user", "content": prompt}], tools=None, max_tokens=32)
     mode   = "BFS" if "BFS" in output.upper() else "DFS"
-    log(f"[MASTER] Mode selected: {mode} (raw: '{output[:20]}')")
+    log(f"[MASTER] Mode selected: {mode} (raw: '{output}')")
     return mode
 
 

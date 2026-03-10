@@ -195,7 +195,7 @@ def main():
             log(f"\n  Predicted answer: {pred_answer} (index {pred_choice})")
         else:
             log(f"\n  Answer: {pred_answer}")
-        log(f"  Reasoning: {result.get('reasoning', '')[:500]}")
+        log(f"  Reasoning: {result.get('reasoning', '')}")
         print_metrics(m)
 
         # Save result JSON

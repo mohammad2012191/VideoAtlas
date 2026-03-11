@@ -34,7 +34,7 @@ from PIL import Image, ImageDraw, ImageFont
 # ==========================================
 # LAYOUT CONSTANTS
 # ==========================================
-HEADER_HEIGHT    = 72
+HEADER_HEIGHT    = 90   # extra height to show the plain-English description line
 MAIN_WIDTH       = 1024   # left panel (main frame)
 SCRATCHPAD_WIDTH = 520    # right panel (live scratchpad + reasoning)
 OUTPUT_WIDTH     = MAIN_WIDTH + SCRATCHPAD_WIDTH
@@ -55,6 +55,22 @@ CATEGORIES = [
     (r"^grid_c(.+?)s_span(.+?)s",        "navgrid",     "Navigator Grid  center={1}s  span={2}s"),
     (r"^scratchpad_(\d+)items",          "scratchpad",  "Scratchpad Evidence Grid  ({1} items)"),
 ]
+
+# Plain-English explanation of each frame type — shown in the header bar so a
+# viewer who has never seen the tool before can follow along.
+CATEGORY_DESCRIPTIONS = {
+    "global":     "Getting a bird's-eye view of the entire video",
+    "dfs_masked": "Deciding which parts of the video still need closer inspection",
+    "dfs_uncert": "Scoring how confident the AI is across each region of the video",
+    "worker":     "A worker agent is zooming in on a specific moment to examine it closely",
+    "bfs_masked": "Marking which areas of the video have already been explored",
+    "bfs_uncert": "Re-evaluating confidence scores across all explored regions",
+    "bfsworker":  "A worker agent is drilling deeper into a promising region of the video",
+    "zoom":       "Examining a specific timestamp up close",
+    "navgrid":    "Navigating the video timeline to choose the next region to explore",
+    "scratchpad": "Reviewing all the evidence collected so far",
+    "unknown":    "Processing…",
+}
 
 CATEGORY_COLORS = {
     "global":     (34,  139,  34),
@@ -132,6 +148,12 @@ _SCRATCHPAD_LABEL_COLOR = (200, 230, 200)
 _SCRATCHPAD_BG          = (20, 20, 20)
 _SCRATCHPAD_TITLE_BG    = (40, 80, 40)
 
+# ── Final-answer box colours (PIL RGB) ────────────────────────────
+_ANSWER_BOX_BG      = (12, 55, 12)     # dark green background
+_ANSWER_BOX_BORDER  = (60, 200, 60)    # bright green border line
+_ANSWER_LABEL_FG    = (100, 255, 120)  # "FINAL ANSWER" label text
+_ANSWER_TEXT_FG     = (255, 255, 200)  # answer body text
+
 
 _REASONING_BG    = (30, 30, 30)
 _REASONING_FG    = (210, 210, 210)
@@ -160,24 +182,22 @@ def _wrap_text(text, font, max_width, draw):
     return lines or [""]
 
 
-def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h):
+def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h, result=None):
     """
     Build a fixed-size scratchpad panel (numpy BGR array).
 
     Layout (top → bottom):
       ┌─────────────────────────┐
+      │  FINAL ANSWER box       │  (only shown once the AI has concluded)
+      ├─────────────────────────┤
       │  title bar (30 px)      │
       ├─────────────────────────┤
-      │  scratchpad grid image  │  (≤ 45 % of panel height)
+      │  scratchpad grid image  │  (≤ 40 % of remaining panel height)
       ├─────────────────────────┤
       │  per-item reasoning     │  (remaining space, scrolled to latest)
       └─────────────────────────┘
     """
     panel = np.full((panel_h, panel_w, 3), _SCRATCHPAD_BG, dtype=np.uint8)
-
-    # ── title bar ──────────────────────────────────────────────────
-    title_h = 30
-    panel[:title_h, :] = _SCRATCHPAD_TITLE_BG
 
     pil  = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil)
@@ -185,20 +205,47 @@ def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h):
     font_item   = _get_font(13)
     font_small  = _get_font(11)
 
+    y_top = 0   # moves down as we stack sections
+
+    # ── FINAL ANSWER box (shown only after the last scratchpad frame) ──
+    if result is not None:
+        font_ans_lbl  = _get_font(13)
+        font_ans_main = _get_font(17)
+        choice = result.get("predicted_choice", "?")
+        answer = result.get("predicted_answer", "?")
+        # Wrap the full answer — no truncation
+        ans_lines = _wrap_text(f"[{choice}]  {answer}", font_ans_main, panel_w - 14, draw)
+        PAD   = 6
+        box_h = PAD + 16 + 3 + len(ans_lines) * 21 + PAD
+        draw.rectangle([(0, 0), (panel_w - 1, box_h - 1)], fill=_ANSWER_BOX_BG)
+        draw.text((PAD, PAD), "FINAL ANSWER", font=font_ans_lbl, fill=_ANSWER_LABEL_FG)
+        ay = PAD + 16 + 3
+        for line in ans_lines:
+            draw.text((PAD, ay), line, font=font_ans_main, fill=_ANSWER_TEXT_FG)
+            ay += 21
+        draw.line([(0, box_h), (panel_w - 1, box_h)], fill=_ANSWER_BOX_BORDER, width=2)
+        y_top = box_h + 2
+
+    # ── title bar ──────────────────────────────────────────────────
+    title_h = 30
+    draw.rectangle([(0, y_top), (panel_w - 1, y_top + title_h - 1)],
+                   fill=_SCRATCHPAD_TITLE_BG)
+
     if scratchpad_img_path is None:
-        draw.text((8, 7), "SCRATCHPAD  (no evidence yet)",
+        draw.text((8, y_top + 7), "SCRATCHPAD  (no evidence yet)",
                   font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
         return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
     m       = re.search(r'scratchpad_(\d+)items', Path(scratchpad_img_path).stem)
     n_items = m.group(1) if m else "?"
-    draw.text((8, 7), f"SCRATCHPAD  ({n_items} evidence items)",
+    draw.text((8, y_top + 7), f"SCRATCHPAD  ({n_items} evidence items)",
               font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
     panel = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
     # ── scratchpad grid image ──────────────────────────────────────
     sp_img = cv2.imread(str(scratchpad_img_path))
     img_section_h = 0
+    img_y_start   = y_top + title_h
     if sp_img is not None:
         max_img_h  = int(panel_h * 0.40)
         h, w       = sp_img.shape[:2]
@@ -207,13 +254,14 @@ def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h):
         new_h      = int(h * scale)
         sp_resized = cv2.resize(sp_img, (new_w, new_h), interpolation=cv2.INTER_AREA)
         x_off      = (panel_w - new_w) // 2
-        y_off      = title_h
-        panel[y_off:y_off + new_h, x_off:x_off + new_w] = sp_resized
-        img_section_h = new_h
+        y_off      = img_y_start
+        if y_off + new_h <= panel_h:
+            panel[y_off:y_off + new_h, x_off:x_off + new_w] = sp_resized
+            img_section_h = new_h
 
     # ── reasoning section ──────────────────────────────────────────
     reasoning_items = _load_reasoning_for_scratchpad(scratchpad_img_path)
-    reasoning_y     = title_h + img_section_h + 4
+    reasoning_y     = img_y_start + img_section_h + 4
 
     # thin divider between image and text
     if img_section_h > 0 and reasoning_items:
@@ -285,7 +333,7 @@ def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h):
 # ==========================================
 # HEADER + FRAME ASSEMBLY
 # ==========================================
-def make_header(label, category, frame_num, total_frames, result_info):
+def make_header(label, category, frame_num, total_frames):
     color_bgr = CATEGORY_COLORS.get(category, (80, 80, 80))
     header    = np.full((HEADER_HEIGHT, OUTPUT_WIDTH, 3), color_bgr, dtype=np.uint8)
 
@@ -293,27 +341,31 @@ def make_header(label, category, frame_num, total_frames, result_info):
     draw = ImageDraw.Draw(pil)
     font_large = _get_font(32)
     font_small = _get_font(20)
+    font_desc  = _get_font(15)
 
-    draw.text((12, 6),  label,                                 font=font_large, fill=(255, 255, 255))
-    draw.text((12, 38), f"Frame {frame_num} / {total_frames}", font=font_small, fill=(220, 220, 220))
+    # Line 1 — frame type name (technical label)
+    draw.text((12, 4),  label,                                 font=font_large, fill=(255, 255, 255))
+    # Line 2 — frame counter
+    draw.text((12, 38), f"Frame {frame_num} / {total_frames}", font=font_small,  fill=(220, 220, 220))
+    # Line 3 — plain-English description of what the AI is doing right now
+    desc = CATEGORY_DESCRIPTIONS.get(category, "")
+    if desc:
+        draw.text((12, 62), desc, font=font_desc, fill=(230, 230, 180))
 
-    # Scratchpad panel title in header
-    draw.text((MAIN_WIDTH + 8, 6),  "◀  LIVE SCRATCHPAD  ▶",
+    # Scratchpad panel title in header (right side)
+    draw.text((MAIN_WIDTH + 8, 35), "◀  LIVE SCRATCHPAD  ▶",
               font=font_small, fill=(180, 255, 180))
-
-    if result_info:
-        bbox   = draw.textbbox((0, 0), result_info, font=font_small)
-        text_w = bbox[2] - bbox[0]
-        draw.text((OUTPUT_WIDTH - text_w - 12, 38), result_info,
-                  font=font_small, fill=(255, 255, 180))
 
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
 def prepare_frame(img_path, label, category, frame_num, total_frames,
-                  result_info, target_content_h, scratchpad_img_path):
+                  target_content_h, scratchpad_img_path, result=None):
     """
     Build one output frame: header | (main_frame | divider | scratchpad_panel)
+
+    `result` is the full result dict; when provided the scratchpad panel shows
+    the FINAL ANSWER box (only passed in once the last scratchpad has appeared).
     """
     # ---- Main frame (left panel) ----
     img = cv2.imread(str(img_path))
@@ -333,7 +385,8 @@ def prepare_frame(img_path, label, category, frame_num, total_frames,
             img = img[:target_content_h, :, :]
 
     # ---- Scratchpad panel (right panel) ----
-    sp_panel = build_scratchpad_panel(scratchpad_img_path, SCRATCHPAD_WIDTH, target_content_h)
+    sp_panel = build_scratchpad_panel(scratchpad_img_path, SCRATCHPAD_WIDTH, target_content_h,
+                                      result=result)
 
     # ---- Vertical divider (2px) ----
     divider = np.full((target_content_h, 2, 3), (60, 60, 60), dtype=np.uint8)
@@ -345,7 +398,7 @@ def prepare_frame(img_path, label, category, frame_num, total_frames,
     if content_row.shape[1] != OUTPUT_WIDTH:
         content_row = cv2.resize(content_row, (OUTPUT_WIDTH, target_content_h))
 
-    header = make_header(label, category, frame_num, total_frames, result_info)
+    header = make_header(label, category, frame_num, total_frames)
     return np.vstack([header, content_row])
 
 
@@ -467,7 +520,15 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
     else:
         print("  No result JSON found — answer overlay disabled.")
 
-    result_info = format_result_info(result)
+    # Find the index of the very last scratchpad frame — the answer box will
+    # only appear on that frame and all frames that come after it.
+    last_sp_idx = None
+    for idx, (category, _, _) in enumerate(classified):
+        if category == "scratchpad":
+            last_sp_idx = idx
+    if last_sp_idx is not None:
+        print(f"  Answer will appear from frame {last_sp_idx + 1} / {len(classified)} "
+              f"(after the final scratchpad).")
 
     if output_path is None:
         output_path = str(run_folder / "replay.mp4")
@@ -496,9 +557,12 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
 
     for i, (category, label, img_path) in enumerate(classified, 1):
         sp_path = sp_timeline[i - 1]
+        # Reveal the answer only once we've passed the final scratchpad frame.
+        # If there is no scratchpad at all, show it from the very first frame.
+        result_for_frame = result if (last_sp_idx is None or (i - 1) >= last_sp_idx) else None
         frame   = prepare_frame(
             img_path, label, category, i, total,
-            result_info, target_content_h, sp_path
+            target_content_h, sp_path, result_for_frame
         )
         writer.write(frame)
 

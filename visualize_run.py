@@ -5,8 +5,14 @@ Frames are shown in TRUE RUN ORDER using the leading sequence number in
 filenames, so the video replays exactly what the system did, step by step.
 
 The right-hand side shows a LIVE SCRATCHPAD PANEL that updates whenever
-a new scratchpad_* image is detected in the run folder — giving a real-time
-view of the evidence collected so far.
+a new scratchpad_* image is detected — giving a real-time view of the
+evidence collected so far.  The question being answered is pinned at the
+top of this panel from frame one, so viewers always have context for what
+the system is looking for.
+
+A full-width TIMELINE SCRUBBER at the bottom shows exactly where in the
+exploration process each frame falls, color-coded by activity type, so
+viewers always know where they are in the overall process.
 
 Usage:
     python visualize_run.py
@@ -22,6 +28,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 import time as _time
 from pathlib import Path
@@ -34,73 +41,64 @@ from PIL import Image, ImageDraw, ImageFont
 # ==========================================
 # LAYOUT CONSTANTS
 # ==========================================
-HEADER_HEIGHT    = 60   # two lines: big description + small tech label
-MAIN_WIDTH       = 1024   # left panel (main frame)
-SCRATCHPAD_WIDTH = 520    # right panel (live scratchpad + reasoning)
-OUTPUT_WIDTH     = MAIN_WIDTH + SCRATCHPAD_WIDTH
+HEADER_HEIGHT    = 65    # Top bar: description + progress strip
+TIMELINE_HEIGHT  = 28    # Bottom bar: phase scrubber
+MAIN_WIDTH       = 960   # Left panel (main frame)
+SCRATCHPAD_WIDTH = 560   # Right panel (question + evidence log)
+OUTPUT_WIDTH     = MAIN_WIDTH + SCRATCHPAD_WIDTH   # 1520
 
 
 # ==========================================
 # FRAME CLASSIFICATION  (label + colour only)
 # ==========================================
 CATEGORIES = [
-    (r"^global_grid",                    "global",      "Global Grid — Master Overview"),
-    (r"^DFS_round(\d+)_masked_grid",     "dfs_masked",  "DFS Round {1} — Masked Grid (Master Probe)"),
-    (r"^DFS_round(\d+)_uncertainty",     "dfs_uncert",  "DFS Round {1} — Uncertainty Analysis Grid"),
-    (r"^W(\d+)_C(\d+)_step(\d+)",        "worker",      "Worker {1} · Cell {2} · Step {3}"),
-    (r"^BFS_batch(\d+)_masked_grid",     "bfs_masked",  "BFS Batch {1} — Masked Grid (Master Probe)"),
-    (r"^BFS_batch(\d+)_uncertainty",     "bfs_uncert",  "BFS Batch {1} — Uncertainty Analysis Grid"),
-    (r"^BFSW(\d+)_depth(\d+)_step(\d+)","bfsworker",   "BFS Worker {1} · Depth {2} · Step {3}"),
-    (r"^zoom_(.+?)_\d{3}$",             "zoom",        "Zoom @ {1}"),
-    (r"^grid_c(.+?)s_span(.+?)s",        "navgrid",     "Navigator Grid  center={1}s  span={2}s"),
-    (r"^scratchpad_(\d+)items",          "scratchpad",  "Scratchpad Evidence Grid  ({1} items)"),
+    (r"^global_grid",                    "global",      "Global Grid"),
+    (r"^DFS_round(\d+)_masked_grid",     "dfs_masked",  "Scanning Regions"),
+    (r"^DFS_round(\d+)_uncertainty",     "dfs_uncert",  "Analyzing Confidence"),
+    (r"^W(\d+)_C(\d+)_step(\d+)",        "worker",      "Inspecting Details"),
+    (r"^BFS_batch(\d+)_masked_grid",     "bfs_masked",  "Tracking Explored Areas"),
+    (r"^BFS_batch(\d+)_uncertainty",     "bfs_uncert",  "Re-evaluating Targets"),
+    (r"^BFSW(\d+)_depth(\d+)_step(\d+)","bfsworker",   "Deep Dive Investigation"),
+    (r"^zoom_",                          "zoom",        "Zooming In"),
+    (r"^grid_c(.+?)s_span(.+?)s",        "navgrid",     "Navigating Timeline"),
+    (r"^scratchpad_(\d+)items",          "scratchpad",  "Reviewing Evidence"),
 ]
 
-# Plain-English explanation of each frame type — shown in the header bar so a
-# viewer who has never seen the tool before can follow along.
+# Plain-English explanation of each frame type — shown in the header bar.
 CATEGORY_DESCRIPTIONS = {
     "global":     "Getting a bird's-eye view of the entire video",
-    "dfs_masked": "Deciding which parts of the video still need closer inspection",
-    "dfs_uncert": "Scoring how confident the AI is across each region of the video",
-    "worker":     "A worker agent is zooming in on a specific moment to examine it closely",
+    "dfs_masked": "Deciding which parts of the video need closer inspection",
+    "dfs_uncert": "Mapping out the most critical moments",
+    "worker":     "Zooming in on a specific moment to examine it closely",
     "bfs_masked": "Marking which areas of the video have already been explored",
-    "bfs_uncert": "Re-evaluating confidence scores across all explored regions",
-    "bfsworker":  "A worker agent is drilling deeper into a promising region of the video",
+    "bfs_uncert": "Updating the search based on new findings",
+    "bfsworker":  "Drilling deeper into a promising region of the video",
     "zoom":       "Examining a specific timestamp up close",
-    "navgrid":    "Navigating the video timeline to choose the next region to explore",
+    "navgrid":    "Navigating the video timeline to choose the next region",
     "scratchpad": "Reviewing all the evidence collected so far",
     "unknown":    "Processing…",
 }
 
-# Short badge label burned onto the bottom of the left panel so the viewer
-# always knows what type of image they're looking at, even mid-playback.
-CATEGORY_BADGE_NAMES = {
-    "global":     "GLOBAL OVERVIEW",
-    "dfs_masked": "DFS — MASKED GRID",
-    "dfs_uncert": "DFS — UNCERTAINTY MAP",
-    "worker":     "WORKER CLOSE-UP",
-    "bfs_masked": "BFS — MASKED GRID",
-    "bfs_uncert": "BFS — UNCERTAINTY MAP",
-    "bfsworker":  "BFS WORKER CLOSE-UP",
-    "zoom":       "ZOOM",
-    "navgrid":    "NAVIGATION GRID",
-    "scratchpad": "SCRATCHPAD GRID",
-    "unknown":    "UNKNOWN",
+# RGB colors — used directly in PIL and converted to BGR when applied to
+# numpy arrays.  All three uses (header stripe, scrubber, progress bar) now
+# pull from the same source so the palette is coherent.
+CATEGORY_COLORS = {
+    "global":     (80,  180, 120),
+    "dfs_masked": (160, 130, 250),
+    "dfs_uncert": (140, 100, 220),
+    "worker":     (220, 160,  90),
+    "bfs_masked": (250, 180,  60),
+    "bfs_uncert": (230, 140,  50),
+    "bfsworker":  (230, 200, 160),
+    "zoom":       (60,  200, 220),
+    "navgrid":    (130, 150, 230),
+    "scratchpad": (100, 190, 150),
+    "unknown":    (100, 100, 100),
 }
 
-CATEGORY_COLORS = {
-    "global":     (34,  139,  34),
-    "dfs_masked": (180, 105, 255),
-    "dfs_uncert": (130,  60, 200),
-    "worker":     (205, 133,  63),
-    "bfs_masked": (255, 165,   0),
-    "bfs_uncert": (200, 120,   0),
-    "bfsworker":  (210, 180, 140),
-    "zoom":       (0,   200, 200),
-    "navgrid":    (100, 100, 200),
-    "scratchpad": (60,  179, 113),
-    "unknown":    (80,   80,  80),
-}
+
+def _rgb_to_bgr(rgb):
+    return (rgb[2], rgb[1], rgb[0])
 
 
 def classify(filename):
@@ -120,15 +118,15 @@ def classify(filename):
 
 
 # ==========================================
-# FONT HELPER
+# FONT & TEXT HELPERS
 # ==========================================
 def _get_font(size):
     for font_path in [
         "C:/Windows/Fonts/segoeui.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
         "C:/Windows/Fonts/arial.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-        "/System/Library/Fonts/Helvetica.ttc",
     ]:
         if os.path.exists(font_path):
             try:
@@ -138,46 +136,15 @@ def _get_font(size):
     return ImageFont.load_default()
 
 
-
-# ==========================================
-# REASONING SIDECAR LOADER
-# ==========================================
-def _load_reasoning_for_scratchpad(scratchpad_img_path):
-    """
-    Given a path like  .../0042_scratchpad_5items.jpg
-    look for           .../0042_scratchpad_5items_reasoning.json
-    Returns list of dicts or [] if not found.
-    """
-    if scratchpad_img_path is None:
-        return []
-    p    = Path(scratchpad_img_path)
-    json_path = p.parent / (p.stem + "_reasoning.json")
-    if not json_path.exists():
-        return []
+def _format_time(seconds):
+    """Convert raw seconds into MM:SS for laymen."""
     try:
-        with open(json_path, encoding='utf-8') as f:
-            return json.load(f)
-    except Exception:
-        return []
-
-_SCRATCHPAD_LABEL_COLOR = (200, 230, 200)
-_SCRATCHPAD_BG          = (20, 20, 20)
-_SCRATCHPAD_TITLE_BG    = (40, 80, 40)
-
-# ── Final-answer box colours (PIL RGB) ────────────────────────────
-_ANSWER_BOX_BG      = (12, 55, 12)     # dark green background
-_ANSWER_BOX_BORDER  = (60, 200, 60)    # bright green border line
-_ANSWER_LABEL_FG    = (100, 255, 120)  # "FINAL ANSWER" label text
-_ANSWER_TEXT_FG     = (255, 255, 200)  # answer body text
-
-
-_REASONING_BG    = (30, 30, 30)
-_REASONING_FG    = (210, 210, 210)
-_REASONING_HL    = (130, 230, 130)   # letter + timestamp highlight
-_CONF_HIGH       = (80,  200, 80)    # confidence ≥ 0.85
-_CONF_MED        = (200, 200, 80)    # confidence ≥ 0.70
-_CONF_LOW        = (200, 100, 80)    # confidence < 0.70
-_DIVIDER_COLOR   = (60,  60,  60)
+        seconds = float(seconds)
+        m = int(seconds // 60)
+        s = int(seconds % 60)
+        return f"{m:02d}:{s:02d}"
+    except (ValueError, TypeError):
+        return "00:00"
 
 
 def _wrap_text(text, font, max_width, draw):
@@ -198,194 +165,292 @@ def _wrap_text(text, font, max_width, draw):
     return lines or [""]
 
 
-def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h, result=None):
+# ==========================================
+# REASONING SIDECAR LOADER
+# ==========================================
+def _load_reasoning_for_scratchpad(scratchpad_img_path):
+    """
+    Given a path like  .../0042_scratchpad_5items.jpg
+    look for           .../0042_scratchpad_5items_reasoning.json
+    Returns list of dicts or [] if not found.
+    """
+    if scratchpad_img_path is None:
+        return []
+    p         = Path(scratchpad_img_path)
+    json_path = p.parent / (p.stem + "_reasoning.json")
+    if not json_path.exists():
+        return []
+    try:
+        with open(json_path, encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+# ── UI Colors (PIL RGB) ────────────────────────────────────
+_SCRATCHPAD_BG          = (30, 32, 36)
+_SCRATCHPAD_TITLE_BG    = (42, 45, 52)
+_SCRATCHPAD_LABEL_COLOR = (240, 240, 245)
+
+_QUESTION_BOX_BG        = (35, 38, 50)
+_QUESTION_BOX_BORDER    = (80, 100, 160)
+_QUESTION_LABEL_FG      = (120, 140, 200)
+_QUESTION_TEXT_FG       = (210, 215, 235)
+
+_ANSWER_BOX_BG          = (40, 55, 85)
+_ANSWER_BOX_BORDER      = (100, 150, 255)
+_ANSWER_LABEL_FG        = (180, 200, 255)
+_ANSWER_TEXT_FG         = (255, 255, 255)
+
+_REASONING_FG           = (220, 220, 225)
+_REASONING_TITLE        = (130, 200, 250)
+_REASONING_NEW_BG       = (45,  55,  70)   # Subtle highlight for newly added items
+_REASONING_NEW_TITLE    = (160, 220, 255)  # Brighter blue for newly added item headers
+_DIVIDER_COLOR          = (65,  70,  80)
+_TRUNCATED_FG           = (100, 110, 130)  # Muted indicator for items scrolled off
+
+
+def build_scratchpad_panel(scratchpad_img_path, prev_sp_path,
+                           panel_w, panel_h, result=None, question=None):
     """
     Build a fixed-size scratchpad panel (numpy BGR array).
 
     Layout (top → bottom):
       ┌─────────────────────────┐
-      │  FINAL ANSWER box       │  (only shown once the AI has concluded)
+      │  QUESTION box (always)  │  pinned from frame 1
       ├─────────────────────────┤
-      │  title bar (30 px)      │
+      │  FINAL CONCLUSION box   │  only after AI has concluded
       ├─────────────────────────┤
-      │  scratchpad grid image  │  (≤ 40 % of remaining panel height)
+      │  title bar (36 px)      │
       ├─────────────────────────┤
-      │  per-item reasoning     │  (remaining space, scrolled to latest)
+      │  per-item reasoning     │  new items highlighted; truncation indicator shown
       └─────────────────────────┘
     """
     panel = np.full((panel_h, panel_w, 3), _SCRATCHPAD_BG, dtype=np.uint8)
+    pil   = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
+    draw  = ImageDraw.Draw(pil)
 
-    pil  = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
-    draw = ImageDraw.Draw(pil)
-    font_title  = _get_font(17)
-    font_item   = _get_font(13)
-    font_small  = _get_font(11)
+    PAD          = 12
+    font_title   = _get_font(18)
+    font_item    = _get_font(14)
+    font_q_label = _get_font(11)
+    font_q_text  = _get_font(14)
 
-    y_top = 0   # moves down as we stack sections
+    y_top = 0
 
-    # ── FINAL ANSWER box (shown only after the last scratchpad frame) ──
-    if result is not None:
-        font_ans_lbl  = _get_font(12)   # "FINAL ANSWER" label
-        font_ans_q    = _get_font(12)   # question text
-        font_ans_main = _get_font(19)   # answer — big and prominent
-        choice   = result.get("predicted_choice", "?")
-        answer   = result.get("predicted_answer", "?")
-        question = result.get("question", "")
-        PAD = 7
-        y   = PAD
-        # Measure line counts for dynamic box sizing
-        q_lines   = _wrap_text(question, font_ans_q,   panel_w - PAD * 2, draw) if question else []
-        ans_lines = _wrap_text(f"[{choice}]  {answer}", font_ans_main, panel_w - PAD * 2, draw)
-        box_h = (PAD
-                 + 15                                       # "FINAL ANSWER" label
-                 + (len(q_lines) * 15 + 5 if q_lines else 0)  # question lines + gap
-                 + 4                                        # divider gap
-                 + len(ans_lines) * 24                      # answer lines
-                 + PAD)
-        draw.rectangle([(0, 0), (panel_w - 1, box_h - 1)], fill=_ANSWER_BOX_BG)
-        # "FINAL ANSWER" label
-        draw.text((PAD, y), "FINAL ANSWER", font=font_ans_lbl, fill=_ANSWER_LABEL_FG)
-        y += 17
-        # Question text (muted green — context, not the answer itself)
+    # ── QUESTION box — always shown when a question is available ──────
+    if question:
+        q_lines = _wrap_text(question, font_q_text, panel_w - PAD * 2, draw)
+        box_h   = PAD + 16 + len(q_lines) * 18 + PAD
+        draw.rectangle([(0, y_top), (panel_w - 1, y_top + box_h - 1)],
+                        fill=_QUESTION_BOX_BG)
+        draw.line([(0, y_top + box_h - 1), (panel_w - 1, y_top + box_h - 1)],
+                   fill=_QUESTION_BOX_BORDER, width=2)
+        draw.text((PAD, y_top + PAD), "QUESTION", font=font_q_label,
+                   fill=_QUESTION_LABEL_FG)
+        y = y_top + PAD + 16
         for ql in q_lines:
-            draw.text((PAD, y), ql, font=font_ans_q, fill=(155, 200, 155))
-            y += 15
-        if q_lines:
-            y += 3
-        # Thin separator between question and answer
+            draw.text((PAD, y), ql, font=font_q_text, fill=_QUESTION_TEXT_FG)
+            y += 18
+        y_top += box_h
+
+    # ── FINAL CONCLUSION box — shown only after the last scratchpad ───
+    if result is not None:
+        font_ans_lbl  = _get_font(11)
+        font_ans_main = _get_font(20)
+        answer    = result.get("predicted_answer", "?")
+        ans_lines = _wrap_text(f"Answer: {answer}", font_ans_main, panel_w - PAD * 2, draw)
+        box_h     = PAD + 16 + 6 + len(ans_lines) * 26 + PAD
+
+        draw.rectangle([(0, y_top), (panel_w - 1, y_top + box_h - 1)],
+                        fill=_ANSWER_BOX_BG)
+        draw.text((PAD, y_top + PAD), "FINAL CONCLUSION", font=font_ans_lbl,
+                   fill=_ANSWER_LABEL_FG)
+        y = y_top + PAD + 18
         draw.line([(PAD, y), (panel_w - PAD, y)], fill=_ANSWER_BOX_BORDER, width=1)
-        y += 4
-        # Answer — big, cream-coloured, no truncation
+        y += 6
         for line in ans_lines:
             draw.text((PAD, y), line, font=font_ans_main, fill=_ANSWER_TEXT_FG)
-            y += 24
-        draw.line([(0, box_h), (panel_w - 1, box_h)], fill=_ANSWER_BOX_BORDER, width=2)
-        y_top = box_h + 2
+            y += 26
+        draw.line([(0, y_top + box_h), (panel_w - 1, y_top + box_h)],
+                   fill=_ANSWER_BOX_BORDER, width=2)
+        y_top += box_h + 2
 
-    # ── title bar ──────────────────────────────────────────────────
-    title_h = 30
+    # ── Title bar ──────────────────────────────────────────────────────
+    title_h = 36
     draw.rectangle([(0, y_top), (panel_w - 1, y_top + title_h - 1)],
-                   fill=_SCRATCHPAD_TITLE_BG)
+                    fill=_SCRATCHPAD_TITLE_BG)
 
     if scratchpad_img_path is None:
-        draw.text((8, y_top + 7), "SCRATCHPAD  (no evidence yet)",
-                  font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
+        draw.text((PAD, y_top + 9), "Evidence Log  (collecting…)",
+                   font=font_title, fill=(130, 130, 140))
         return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
     m       = re.search(r'scratchpad_(\d+)items', Path(scratchpad_img_path).stem)
     n_items = m.group(1) if m else "?"
-    draw.text((8, y_top + 7), f"SCRATCHPAD  ({n_items} evidence items)",
-              font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
+    draw.text((PAD, y_top + 8), f"Evidence Log  —  {n_items} items",
+               font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
     panel = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
-    # ── reasoning section ──────────────────────────────────────────
-    # (The scratchpad grid thumbnail was removed — it was a tiny, lower-quality
-    # duplicate of the left panel. The space is better used for reasoning text.)
+    # ── Reasoning items ────────────────────────────────────────────────
     reasoning_items = _load_reasoning_for_scratchpad(scratchpad_img_path)
-    reasoning_y     = y_top + title_h + 4
+    prev_items      = _load_reasoning_for_scratchpad(prev_sp_path)
+    new_count       = len(reasoning_items) - len(prev_items)   # items added since last scratchpad
+    reasoning_y     = y_top + title_h + 10
 
     if not reasoning_items:
         return panel
 
-    # Convert panel to PIL for text rendering
     pil2  = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
     draw2 = ImageDraw.Draw(pil2)
 
-    # Build all lines first so we can clip to the bottom (show most recent)
-    ITEM_MARGIN  = 10   # px between items (extra breathing room)
-    LINE_H_ITEM  = 17   # px per line for description
-    LINE_H_SMALL = 14   # px per line for subtitle
-    PAD_X        = 8
+    ITEM_MARGIN  = 16
+    LINE_H       = 19
+    font_ev_hdr  = _get_font(15)
 
-    all_blocks = []   # list of (lines_to_draw: [(text, color, font)], block_h)
+    all_blocks = []
+    for idx, item in enumerate(reasoning_items):
+        is_new      = new_count > 0 and idx >= len(reasoning_items) - new_count
+        letter      = item.get("letter", "?")
+        t           = item.get("time", 0.0)
+        desc        = item.get("description", "")
+        header_text = f"Event {letter} • {_format_time(t)}"
+        desc_lines  = _wrap_text(desc, font_item, panel_w - PAD * 2 - 4, draw2)
 
-    for item in reasoning_items:
-        letter  = item.get("letter", "?")
-        t       = item.get("time", 0.0)
-        conf    = item.get("confidence", 0.0)
-        desc    = item.get("description", "")
-        sub     = item.get("subtitle", "")
-
-        conf_color = _CONF_HIGH if conf >= 0.85 else (_CONF_MED if conf >= 0.70 else _CONF_LOW)
-
-        header_text  = f"[{letter}] @{t:.1f}s  conf={conf:.2f}"
-        desc_lines   = _wrap_text(desc, font_item, panel_w - PAD_X * 2, draw2)
-        sub_lines    = _wrap_text(f"♪ {sub}", font_small, panel_w - PAD_X * 2, draw2) if sub else []
-
-        block_lines = [(header_text, conf_color, font_item)]
+        title_color = _REASONING_NEW_TITLE if is_new else _REASONING_TITLE
+        block_lines = [(header_text, title_color, font_ev_hdr, is_new)]
         for dl in desc_lines:
-            block_lines.append((dl, _REASONING_FG, font_item))
-        for sl in sub_lines:
-            block_lines.append((sl, (140, 160, 200), font_small))
+            block_lines.append((dl, _REASONING_FG, font_item, is_new))
 
-        block_h = (len(block_lines) * LINE_H_ITEM) + ITEM_MARGIN
-        all_blocks.append((block_lines, block_h))
+        block_h = (len(block_lines) * LINE_H) + ITEM_MARGIN
+        all_blocks.append((block_lines, block_h, is_new))
 
-    # Measure total height; if overflow, skip oldest blocks to show recent ones
-    avail_h     = panel_h - reasoning_y - 4
-    total_h     = sum(bh for _, bh in all_blocks)
+    # Clip to available height, keeping newest items; emit truncation indicator
+    avail_h     = panel_h - reasoning_y - 10
+    total_h     = sum(bh for _, bh, _ in all_blocks)
     start_block = 0
+
     if total_h > avail_h:
         running = 0
-        for i, (_, bh) in enumerate(all_blocks):
+        for i, (_, bh, _) in enumerate(all_blocks):
             running += bh
             if running >= total_h - avail_h:
                 start_block = i
                 break
 
-    cur_y = reasoning_y + 4
-    for block_lines, block_h in all_blocks[start_block:]:
+    if start_block > 0:
+        font_trunc  = _get_font(11)
+        skipped_txt = f"↑  {start_block} earlier item{'s' if start_block != 1 else ''} not shown"
+        draw2.text((PAD, reasoning_y), skipped_txt, font=font_trunc, fill=_TRUNCATED_FG)
+        reasoning_y += 18
+
+    cur_y = reasoning_y
+    for block_lines, block_h, is_new in all_blocks[start_block:]:
         if cur_y + block_h > panel_h - 2:
             break
-        for line_text, line_color, line_font in block_lines:
-            draw2.text((PAD_X, cur_y), line_text, font=line_font, fill=line_color)
-            cur_y += LINE_H_ITEM
-        # small divider between items
-        draw2.line([(PAD_X, cur_y), (panel_w - PAD_X, cur_y)], fill=_DIVIDER_COLOR, width=1)
+        if is_new:
+            draw2.rectangle(
+                [(2, cur_y - 2), (panel_w - 3, cur_y + block_h - ITEM_MARGIN + 2)],
+                fill=_REASONING_NEW_BG,
+            )
+        for line_text, line_color, line_font, new_flag in block_lines:
+            draw2.text((PAD + (4 if new_flag else 0), cur_y), line_text,
+                        font=line_font, fill=line_color)
+            cur_y += LINE_H
+        draw2.line([(PAD, cur_y), (panel_w - PAD, cur_y)], fill=_DIVIDER_COLOR, width=1)
         cur_y += ITEM_MARGIN
 
     return cv2.cvtColor(np.array(pil2), cv2.COLOR_RGB2BGR)
 
 
 # ==========================================
-# HEADER + FRAME ASSEMBLY
+# HEADER
 # ==========================================
 def make_header(label, category, frame_num, total_frames):
-    color_bgr = CATEGORY_COLORS.get(category, (80, 80, 80))
+    color_rgb = CATEGORY_COLORS.get(category, (80, 80, 80))
 
-    # Dark neutral background — no jarring full-color flood fill every frame.
-    # Category color is shown only as an 8px accent stripe on the left edge.
-    header = np.full((HEADER_HEIGHT, OUTPUT_WIDTH, 3), (22, 22, 26), dtype=np.uint8)
-    header[:, :8, :] = color_bgr
+    header = np.full((HEADER_HEIGHT, OUTPUT_WIDTH, 3), (22, 24, 28), dtype=np.uint8)
+    # Accent stripe — RGB→BGR for the numpy array
+    header[:, :10, :] = _rgb_to_bgr(color_rgb)
 
     pil  = Image.fromarray(cv2.cvtColor(header, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil)
-    font_big   = _get_font(22)   # plain-English description — primary, most useful
-    font_small = _get_font(13)   # technical label + frame counter — secondary
 
-    # Line 1 — what the AI is doing right now (big, readable at a glance)
+    font_big   = _get_font(22)
+    font_small = _get_font(13)
+
     desc = CATEGORY_DESCRIPTIONS.get(category, label)
-    draw.text((18, 6),  desc,                                      font=font_big,   fill=(235, 235, 235))
-    # Line 2 — technical label + frame position (small, for those who want detail)
-    draw.text((18, 36), f"{label}  ·  Frame {frame_num} / {total_frames}",
-              font=font_small, fill=(130, 130, 130))
+    draw.text((22, 14), desc, font=font_big, fill=(245, 245, 250))
 
-    # Right side: scratchpad panel title
-    draw.text((MAIN_WIDTH + 8, 22), "LIVE SCRATCHPAD",
-              font=font_small, fill=(160, 220, 160))
+    frame_text = f"Frame {frame_num} / {total_frames}"
+    w_frame    = draw.textlength(frame_text, font=font_small)
+    draw.text((MAIN_WIDTH - w_frame - 20, 18), frame_text,
+               font=font_small, fill=(100, 110, 120))
+
+    # Progress bar — thin strip at the bottom of the header
+    bar_x1, bar_x2 = 22, OUTPUT_WIDTH - 22
+    bar_y, bar_h   = HEADER_HEIGHT - 11, 5
+    draw.rectangle([(bar_x1, bar_y), (bar_x2, bar_y + bar_h)], fill=(45, 50, 60))
+    fill_x = bar_x1 + int((bar_x2 - bar_x1) * frame_num / total_frames)
+    if fill_x > bar_x1:
+        draw.rectangle([(bar_x1, bar_y), (fill_x, bar_y + bar_h)], fill=color_rgb)
 
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
-def prepare_frame(img_path, label, category, frame_num, total_frames,
-                  target_content_h, scratchpad_img_path, result=None):
+# ==========================================
+# TIMELINE SCRUBBER
+# ==========================================
+def build_timeline_scrubber(categories_all, current_idx, width, height):
     """
-    Build one output frame: header | (main_frame | divider | scratchpad_panel)
+    Full-width bar at the bottom of the frame.  Each segment represents one
+    frame, colored by its activity category.  Past frames are dimmed; the
+    current frame is marked with a bright vertical tick.  Viewers can see at
+    a glance where in the overall exploration process each frame falls.
+    """
+    bar   = np.full((height, width, 3), (20, 22, 26), dtype=np.uint8)
+    total = len(categories_all)
+    if total == 0:
+        return bar
 
-    `result` is the full result dict; when provided the scratchpad panel shows
-    the FINAL ANSWER box (only passed in once the last scratchpad has appeared).
+    seg_w = width / total
+    for i, cat in enumerate(categories_all):
+        color = CATEGORY_COLORS.get(cat, (80, 80, 80))
+        x1    = int(i * seg_w)
+        x2    = max(x1 + 1, int((i + 1) * seg_w))
+        if i < current_idx:
+            c_bgr = (int(color[2] * 0.4), int(color[1] * 0.4), int(color[0] * 0.4))
+        else:
+            c_bgr = _rgb_to_bgr(color)
+        bar[5:height - 5, x1:x2] = c_bgr
+
+    # Current-position marker
+    cx = int((current_idx + 0.5) * seg_w)
+    bar[:, max(0, cx - 1):min(width, cx + 2)] = (255, 255, 255)
+
+    # "TIMELINE" label on the left
+    pil  = Image.fromarray(cv2.cvtColor(bar, cv2.COLOR_BGR2RGB))
+    draw = ImageDraw.Draw(pil)
+    draw.text((6, (height - 11) // 2), "TIMELINE", font=_get_font(10),
+               fill=(140, 150, 165))
+
+    return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
+
+
+# ==========================================
+# FRAME ASSEMBLY
+# ==========================================
+def prepare_frame(img_path, label, category, frame_num, total_frames,
+                  target_content_h, scratchpad_img_path, prev_sp_path,
+                  result=None, question=None,
+                  categories_all=None, current_idx=0):
     """
-    # ---- Main frame (left panel) ----
+    Build one output frame:
+        header          (HEADER_HEIGHT)
+        main | scratchpad  (target_content_h)
+        timeline scrubber  (TIMELINE_HEIGHT)
+    """
+    # ---- Main frame ----
     img = cv2.imread(str(img_path))
     if img is None:
         img = np.zeros((target_content_h, MAIN_WIDTH, 3), dtype=np.uint8)
@@ -395,29 +460,32 @@ def prepare_frame(img_path, label, category, frame_num, total_frames,
         h, w  = img.shape[:2]
         new_h = int(h * MAIN_WIDTH / w)
         img   = cv2.resize(img, (MAIN_WIDTH, new_h), interpolation=cv2.INTER_AREA)
-
         if img.shape[0] < target_content_h:
             pad = np.zeros((target_content_h - img.shape[0], MAIN_WIDTH, 3), dtype=np.uint8)
             img = np.vstack([img, pad])
         elif img.shape[0] > target_content_h:
             img = img[:target_content_h, :, :]
 
-    # ---- Scratchpad panel (right panel) ----
-    sp_panel = build_scratchpad_panel(scratchpad_img_path, SCRATCHPAD_WIDTH, target_content_h,
-                                      result=result)
+    # ---- Scratchpad panel ----
+    sp_panel = build_scratchpad_panel(
+        scratchpad_img_path, prev_sp_path,
+        SCRATCHPAD_WIDTH, target_content_h,
+        result=result, question=question,
+    )
 
-    # ---- Vertical divider (2px) ----
+    # ---- Vertical divider ----
     divider = np.full((target_content_h, 2, 3), (60, 60, 60), dtype=np.uint8)
 
-    # ---- Combine left + divider + right ----
     content_row = np.hstack([img, divider, sp_panel])
-
-    # Guard against ±1px rounding
     if content_row.shape[1] != OUTPUT_WIDTH:
         content_row = cv2.resize(content_row, (OUTPUT_WIDTH, target_content_h))
 
-    header = make_header(label, category, frame_num, total_frames)
-    return np.vstack([header, content_row])
+    header   = make_header(label, category, frame_num, total_frames)
+    scrubber = build_timeline_scrubber(
+        categories_all or [], current_idx, OUTPUT_WIDTH, TIMELINE_HEIGHT,
+    )
+
+    return np.vstack([header, content_row, scrubber])
 
 
 # ==========================================
@@ -425,15 +493,19 @@ def prepare_frame(img_path, label, category, frame_num, total_frames,
 # ==========================================
 def build_scratchpad_timeline(classified):
     """
-    For each frame index i, return the path of the most recent scratchpad_*
-    image seen at or before frame i. Returns a list of (Path | None).
+    For each frame index i return (current_sp_path, prev_sp_path).
+    current_sp_path — most recent scratchpad seen at or before frame i.
+    prev_sp_path    — the scratchpad before current_sp_path, used to diff
+                      and highlight newly added evidence items.
     """
     timeline = []
+    prev     = None
     current  = None
     for category, _label, img_path in classified:
         if category == "scratchpad":
+            prev    = current
             current = img_path
-        timeline.append(current)
+        timeline.append((current, prev))
     return timeline
 
 
@@ -472,18 +544,18 @@ def format_result_info(result):
 # H.264 RE-ENCODE
 # ==========================================
 def _reencode_h264(input_path, output_path, end_hold_seconds=4):
-    import subprocess
-    # tpad=stop_mode=clone:stop_duration=N freezes the last frame for N seconds
-    vf = f"tpad=stop_mode=clone:stop_duration={end_hold_seconds}"
-    cmd = (
-        f'ffmpeg -y -i "{input_path}" '
-        f'-vf "{vf}" '
-        f'-c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p '
-        f'-an -movflags +faststart '
-        f'"{output_path}"'
-    )
+    # tpad=stop_mode=clone:stop_duration=N freezes the last frame for N seconds.
+    # Using a list avoids shell injection from paths with spaces or quotes.
+    vf  = f"tpad=stop_mode=clone:stop_duration={end_hold_seconds}"
+    cmd = [
+        "ffmpeg", "-y", "-i", str(input_path),
+        "-vf", vf,
+        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+        "-pix_fmt", "yuv420p", "-an", "-movflags", "+faststart",
+        str(output_path),
+    ]
     print(f"  Re-encoding to H.264 with ffmpeg (+ {end_hold_seconds}s end freeze)...")
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         print(f"  [!] ffmpeg re-encode failed:\n{result.stderr[-400:]}")
         return False
@@ -507,7 +579,6 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
 
     print(f"\nFound {len(all_images)} images in: {run_folder}")
 
-    # Sort by leading sequence number
     def _seq(p):
         m = re.match(r'^(\d+)_', p.name)
         return int(m.group(1)) if m else 0
@@ -515,22 +586,22 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
     all_images.sort(key=_seq)
     print("  Sorted by sequence number (true run order).")
 
-    # Classify each image
     classified = []
     for img_path in all_images:
         bare_name = re.sub(r'^\d+_', '', img_path.name)
         category, label = classify(bare_name)
         classified.append((category, label, img_path))
 
-    # Build the per-frame scratchpad timeline
-    sp_timeline = build_scratchpad_timeline(classified)
+    sp_timeline    = build_scratchpad_timeline(classified)
+    categories_all = [c for c, _, _ in classified]
 
-    # Load result JSON
     if result_json_path:
         with open(result_json_path) as f:
             result = json.load(f)
     else:
         result = load_result(run_folder)
+
+    question = result.get("question", "") if result else ""
 
     if result:
         print(f"  Result: [{result.get('predicted_choice')}] "
@@ -538,8 +609,10 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
     else:
         print("  No result JSON found — answer overlay disabled.")
 
-    # Find the index of the very last scratchpad frame — the answer box will
-    # only appear on that frame and all frames that come after it.
+    if question:
+        print(f"  Question pinned from frame 1: {question[:80]}")
+
+    # Find the last scratchpad frame — answer box revealed from that point on.
     last_sp_idx = None
     for idx, (category, _, _) in enumerate(classified):
         if category == "scratchpad":
@@ -555,7 +628,6 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
     print(f"\nBuilding video: {total} frames @ {fps} fps  →  {output_path}")
     print(f"  Layout: {MAIN_WIDTH}px (main) + {SCRATCHPAD_WIDTH}px (scratchpad) = {OUTPUT_WIDTH}px wide")
 
-    # Determine consistent target content height from sample images
     sample_heights = []
     for _, _, img_path in classified[:min(20, total)]:
         img = cv2.imread(str(img_path))
@@ -563,7 +635,7 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
             h, w = img.shape[:2]
             sample_heights.append(int(h * MAIN_WIDTH / w))
     target_content_h = int(np.median(sample_heights)) if sample_heights else 720
-    total_h = target_content_h + HEADER_HEIGHT
+    total_h          = target_content_h + HEADER_HEIGHT + TIMELINE_HEIGHT
 
     tmp_path = output_path.replace(".mp4", "_raw.mp4")
     fourcc   = cv2.VideoWriter_fourcc(*"mp4v")
@@ -574,13 +646,13 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
         return None
 
     for i, (category, label, img_path) in enumerate(classified, 1):
-        sp_path = sp_timeline[i - 1]
-        # Reveal the answer only once we've passed the final scratchpad frame.
-        # If there is no scratchpad at all, show it from the very first frame.
-        result_for_frame = result if (last_sp_idx is None or (i - 1) >= last_sp_idx) else None
-        frame   = prepare_frame(
+        sp_path, prev_sp     = sp_timeline[i - 1]
+        result_for_frame     = result if (last_sp_idx is None or (i - 1) >= last_sp_idx) else None
+        frame = prepare_frame(
             img_path, label, category, i, total,
-            target_content_h, sp_path, result_for_frame
+            target_content_h, sp_path, prev_sp,
+            result=result_for_frame, question=question,
+            categories_all=categories_all, current_idx=i - 1,
         )
         writer.write(frame)
 

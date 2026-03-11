@@ -34,7 +34,7 @@ from PIL import Image, ImageDraw, ImageFont
 # ==========================================
 # LAYOUT CONSTANTS
 # ==========================================
-HEADER_HEIGHT    = 90   # extra height to show the plain-English description line
+HEADER_HEIGHT    = 60   # two lines: big description + small tech label
 MAIN_WIDTH       = 1024   # left panel (main frame)
 SCRATCHPAD_WIDTH = 520    # right panel (live scratchpad + reasoning)
 OUTPUT_WIDTH     = MAIN_WIDTH + SCRATCHPAD_WIDTH
@@ -70,6 +70,22 @@ CATEGORY_DESCRIPTIONS = {
     "navgrid":    "Navigating the video timeline to choose the next region to explore",
     "scratchpad": "Reviewing all the evidence collected so far",
     "unknown":    "Processing…",
+}
+
+# Short badge label burned onto the bottom of the left panel so the viewer
+# always knows what type of image they're looking at, even mid-playback.
+CATEGORY_BADGE_NAMES = {
+    "global":     "GLOBAL OVERVIEW",
+    "dfs_masked": "DFS — MASKED GRID",
+    "dfs_uncert": "DFS — UNCERTAINTY MAP",
+    "worker":     "WORKER CLOSE-UP",
+    "bfs_masked": "BFS — MASKED GRID",
+    "bfs_uncert": "BFS — UNCERTAINTY MAP",
+    "bfsworker":  "BFS WORKER CLOSE-UP",
+    "zoom":       "ZOOM",
+    "navgrid":    "NAVIGATION GRID",
+    "scratchpad": "SCRATCHPAD GRID",
+    "unknown":    "UNKNOWN",
 }
 
 CATEGORY_COLORS = {
@@ -209,20 +225,40 @@ def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h, result=None):
 
     # ── FINAL ANSWER box (shown only after the last scratchpad frame) ──
     if result is not None:
-        font_ans_lbl  = _get_font(13)
-        font_ans_main = _get_font(17)
-        choice = result.get("predicted_choice", "?")
-        answer = result.get("predicted_answer", "?")
-        # Wrap the full answer — no truncation
-        ans_lines = _wrap_text(f"[{choice}]  {answer}", font_ans_main, panel_w - 14, draw)
-        PAD   = 6
-        box_h = PAD + 16 + 3 + len(ans_lines) * 21 + PAD
+        font_ans_lbl  = _get_font(12)   # "FINAL ANSWER" label
+        font_ans_q    = _get_font(12)   # question text
+        font_ans_main = _get_font(19)   # answer — big and prominent
+        choice   = result.get("predicted_choice", "?")
+        answer   = result.get("predicted_answer", "?")
+        question = result.get("question", "")
+        PAD = 7
+        y   = PAD
+        # Measure line counts for dynamic box sizing
+        q_lines   = _wrap_text(question, font_ans_q,   panel_w - PAD * 2, draw) if question else []
+        ans_lines = _wrap_text(f"[{choice}]  {answer}", font_ans_main, panel_w - PAD * 2, draw)
+        box_h = (PAD
+                 + 15                                       # "FINAL ANSWER" label
+                 + (len(q_lines) * 15 + 5 if q_lines else 0)  # question lines + gap
+                 + 4                                        # divider gap
+                 + len(ans_lines) * 24                      # answer lines
+                 + PAD)
         draw.rectangle([(0, 0), (panel_w - 1, box_h - 1)], fill=_ANSWER_BOX_BG)
-        draw.text((PAD, PAD), "FINAL ANSWER", font=font_ans_lbl, fill=_ANSWER_LABEL_FG)
-        ay = PAD + 16 + 3
+        # "FINAL ANSWER" label
+        draw.text((PAD, y), "FINAL ANSWER", font=font_ans_lbl, fill=_ANSWER_LABEL_FG)
+        y += 17
+        # Question text (muted green — context, not the answer itself)
+        for ql in q_lines:
+            draw.text((PAD, y), ql, font=font_ans_q, fill=(155, 200, 155))
+            y += 15
+        if q_lines:
+            y += 3
+        # Thin separator between question and answer
+        draw.line([(PAD, y), (panel_w - PAD, y)], fill=_ANSWER_BOX_BORDER, width=1)
+        y += 4
+        # Answer — big, cream-coloured, no truncation
         for line in ans_lines:
-            draw.text((PAD, ay), line, font=font_ans_main, fill=_ANSWER_TEXT_FG)
-            ay += 21
+            draw.text((PAD, y), line, font=font_ans_main, fill=_ANSWER_TEXT_FG)
+            y += 24
         draw.line([(0, box_h), (panel_w - 1, box_h)], fill=_ANSWER_BOX_BORDER, width=2)
         y_top = box_h + 2
 
@@ -242,30 +278,11 @@ def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h, result=None):
               font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
     panel = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
-    # ── scratchpad grid image ──────────────────────────────────────
-    sp_img = cv2.imread(str(scratchpad_img_path))
-    img_section_h = 0
-    img_y_start   = y_top + title_h
-    if sp_img is not None:
-        max_img_h  = int(panel_h * 0.40)
-        h, w       = sp_img.shape[:2]
-        scale      = min(panel_w / w, max_img_h / h)
-        new_w      = int(w * scale)
-        new_h      = int(h * scale)
-        sp_resized = cv2.resize(sp_img, (new_w, new_h), interpolation=cv2.INTER_AREA)
-        x_off      = (panel_w - new_w) // 2
-        y_off      = img_y_start
-        if y_off + new_h <= panel_h:
-            panel[y_off:y_off + new_h, x_off:x_off + new_w] = sp_resized
-            img_section_h = new_h
-
     # ── reasoning section ──────────────────────────────────────────
+    # (The scratchpad grid thumbnail was removed — it was a tiny, lower-quality
+    # duplicate of the left panel. The space is better used for reasoning text.)
     reasoning_items = _load_reasoning_for_scratchpad(scratchpad_img_path)
-    reasoning_y     = img_y_start + img_section_h + 4
-
-    # thin divider between image and text
-    if img_section_h > 0 and reasoning_items:
-        panel[reasoning_y - 2:reasoning_y, :] = _DIVIDER_COLOR
+    reasoning_y     = y_top + title_h + 4
 
     if not reasoning_items:
         return panel
@@ -275,10 +292,10 @@ def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h, result=None):
     draw2 = ImageDraw.Draw(pil2)
 
     # Build all lines first so we can clip to the bottom (show most recent)
-    ITEM_MARGIN  = 6    # px between items
-    LINE_H_ITEM  = 16   # px per line for description
-    LINE_H_SMALL = 13   # px per line for subtitle
-    PAD_X        = 6
+    ITEM_MARGIN  = 10   # px between items (extra breathing room)
+    LINE_H_ITEM  = 17   # px per line for description
+    LINE_H_SMALL = 14   # px per line for subtitle
+    PAD_X        = 8
 
     all_blocks = []   # list of (lines_to_draw: [(text, color, font)], block_h)
 
@@ -335,26 +352,27 @@ def build_scratchpad_panel(scratchpad_img_path, panel_w, panel_h, result=None):
 # ==========================================
 def make_header(label, category, frame_num, total_frames):
     color_bgr = CATEGORY_COLORS.get(category, (80, 80, 80))
-    header    = np.full((HEADER_HEIGHT, OUTPUT_WIDTH, 3), color_bgr, dtype=np.uint8)
+
+    # Dark neutral background — no jarring full-color flood fill every frame.
+    # Category color is shown only as an 8px accent stripe on the left edge.
+    header = np.full((HEADER_HEIGHT, OUTPUT_WIDTH, 3), (22, 22, 26), dtype=np.uint8)
+    header[:, :8, :] = color_bgr
 
     pil  = Image.fromarray(cv2.cvtColor(header, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil)
-    font_large = _get_font(32)
-    font_small = _get_font(20)
-    font_desc  = _get_font(15)
+    font_big   = _get_font(22)   # plain-English description — primary, most useful
+    font_small = _get_font(13)   # technical label + frame counter — secondary
 
-    # Line 1 — frame type name (technical label)
-    draw.text((12, 4),  label,                                 font=font_large, fill=(255, 255, 255))
-    # Line 2 — frame counter
-    draw.text((12, 38), f"Frame {frame_num} / {total_frames}", font=font_small,  fill=(220, 220, 220))
-    # Line 3 — plain-English description of what the AI is doing right now
-    desc = CATEGORY_DESCRIPTIONS.get(category, "")
-    if desc:
-        draw.text((12, 62), desc, font=font_desc, fill=(230, 230, 180))
+    # Line 1 — what the AI is doing right now (big, readable at a glance)
+    desc = CATEGORY_DESCRIPTIONS.get(category, label)
+    draw.text((18, 6),  desc,                                      font=font_big,   fill=(235, 235, 235))
+    # Line 2 — technical label + frame position (small, for those who want detail)
+    draw.text((18, 36), f"{label}  ·  Frame {frame_num} / {total_frames}",
+              font=font_small, fill=(130, 130, 130))
 
-    # Scratchpad panel title in header (right side)
-    draw.text((MAIN_WIDTH + 8, 35), "◀  LIVE SCRATCHPAD  ▶",
-              font=font_small, fill=(180, 255, 180))
+    # Right side: scratchpad panel title
+    draw.text((MAIN_WIDTH + 8, 22), "LIVE SCRATCHPAD",
+              font=font_small, fill=(160, 220, 160))
 
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 

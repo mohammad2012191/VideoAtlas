@@ -1,0 +1,29 @@
+{
+  "question": "According to the video, what is the primary reason for the appearance of giraffe images on the rocks in the deep desert?",
+  "candidates": [
+    "A. Migration.",
+    "B. The creativity of the ancients in the desert.",
+    "C. Climate change.",
+    "D. The imagination of the ancients in the desert."
+  ],
+  "predicted_choice": 2,
+  "predicted_answer": "C. Climate change.",
+  "reasoning": "Evidence [B] at 1403.9s shows rock carvings of giraffes and mentions they are 'animals long gone from this desolate wilderness'. Evidence [C] at 1418.6s provides the definitive answer, where the narrator explicitly states that these images 'show the power of climate change', explaining that the desert was once a lush savanna where these animals lived. This directly supports option C.",
+  "metrics": {
+    "vlm_calls": 58,
+    "input_tokens": 207961,
+    "output_tokens": 2750,
+    "total_tokens": 210711,
+    "master_tokens": 19566,
+    "worker_tokens": 191145,
+    "estimated_tflops": 1264.27,
+    "frames_decoded": 3228,
+    "total_frames": 75189,
+    "sufficiency_checks": 1,
+    "explore_rounds": 1,
+    "evidence_count": 3,
+    "wall_time_s": 1342.32,
+    "coverage_pct": 1.56,
+    "mode_used": "DFS"
+  }
+}

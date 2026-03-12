@@ -1,0 +1,29 @@
+{
+  "question": "According to the video, how did the debate between Einstein and Bohr about quantum mechanics turn out?",
+  "candidates": [
+    "A. The experiment by the team at the high-altitude observatory further confirmed that Bohr was right.",
+    "B. Bell's experiment completely confirmed that Bohr was correct.",
+    "C. Bell's experiment completely confirmed that Einstein was correct.",
+    "D. Pan Jianwei's team confirmed that Bohr was correct."
+  ],
+  "predicted_choice": 0,
+  "predicted_answer": "A. The experiment by the team at the high-altitude observatory further confirmed that Bohr was right.",
+  "reasoning": "The video discusses the long-standing debate between Einstein and Bohr regarding quantum mechanics and entanglement. It highlights John Bell's work which led to experimental tests. Evidence [K] and [L] mention that early experiments confirmed Bohr's predictions. However, the video then focuses on a more recent 'Cosmic Bell Test' performed by a team at a high-altitude observatory (Canary Islands) using quasars [N, O, P]. Anton Zeilinger [Q] and David Kaiser [X] explain that the results of this specific experiment at the high-altitude observatory leave 'hardly any room left for a kind of alternative, Einstein-like explanation,' thereby further confirming that Bohr's view of entanglement was correct. This directly supports Option A.",
+  "metrics": {
+    "vlm_calls": 115,
+    "input_tokens": 485038,
+    "output_tokens": 9098,
+    "total_tokens": 494136,
+    "master_tokens": 26358,
+    "worker_tokens": 467778,
+    "estimated_tflops": 2964.82,
+    "frames_decoded": 6477,
+    "total_frames": 95863,
+    "sufficiency_checks": 1,
+    "explore_rounds": 1,
+    "evidence_count": 25,
+    "wall_time_s": 2637.47,
+    "coverage_pct": 0.0,
+    "mode_used": "DFS"
+  }
+}

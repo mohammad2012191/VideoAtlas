@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoAtlas: Navigating Long-Form Video in Logarithmic Compute</title>
+    <meta name="description" content="VideoAtlas: Navigating Long-Form Video in Logarithmic Compute">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --text-color: #333;
+            --bg-color: #fafafa;
+            --container-width: 1000px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+            background-color: #fff;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #111;
+        }
+
+        .authors {
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+
+        .authors a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .authors a:hover {
+            text-decoration: underline;
+        }
+
+        .affiliations {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .affiliations span {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        /* Action Buttons */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn:hover {
+            background-color: #555;
+        }
+
+        .btn.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Sections */
+        .section {
+            padding: 60px 0;
+            background-color: var(--bg-color);
+        }
+
+        .section.white {
+            background-color: #fff;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #111;
+        }
+
+        .content {
+            font-size: 1.1rem;
+            text-align: justify;
+        }
+
+        .figure-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .figure-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .figure-caption {
+            font-size: 0.95rem;
+            color: #555;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .video-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .video-card video {
+            width: 100%;
+            border-radius: 6px;
+            background-color: #000;
+        }
+
+        .video-title {
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* BibTeX */
+        pre {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            background-color: #fff;
+            border-top: 1px solid #eaeaea;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero">
+        <div class="container">
+            <h1 class="title">VideoAtlas: Navigating Long-Form Video in Logarithmic Compute</h1>
+
+            <div class="authors">
+                <a href="#">Mohamed Eltahir</a><sup>1</sup>,
+                <a href="#">Ali Habibullah</a><sup>1,†</sup>,
+                <a href="#">Yazan Alshoibi</a><sup>1,†</sup>, <br>
+                <a href="#">Lama Ayash</a><sup>1,2</sup>,
+                <a href="#">Tanveer Hussain</a><sup>3,*</sup>,
+                <a href="#">Naeemullah Khan</a><sup>1,*</sup>
+            </div>
+
+            <div class="affiliations">
+                <span><sup>1</sup> KAUST</span>
+                <span><sup>2</sup> King Khalid University</span>
+                <span><sup>3</sup> Edge Hill University</span>
+            </div>
+
+            <div style="font-size: 0.9rem; color: #888; margin-top: -10px;">
+                <span><sup>*</sup> Principal Investigator</span> | <span><sup>†</sup> Equal Contribution</span>
+            </div>
+
+            <div class="button-group">
+                <a href="#" class="btn disabled" title="Coming Soon">
+                    <i class="ai ai-arxiv"></i> Paper (Coming Soon)
+                </a>
+                <a href="https://github.com/mohammad2012191/VideoAtlas" class="btn" title="Visit GitHub Repository">
+                    <i class="fab fa-github"></i> Code
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Abstract</h2>
+            <div class="content">
+                <p>
+                    Extending language models to video introduces two challenges: <em>representation</em>, where
+                    existing methods rely on lossy approximations such as uniform sampling that sacrifices temporal
+                    coverage, and <em>long-context</em>, where caption- or agent-based pipelines collapse video into
+                    text and lose visual fidelity. To overcome this, we introduce <strong>VideoAtlas</strong>, a
+                    task-agnostic environment to represent video as a hierarchical grid that is simultaneously lossless,
+                    navigable, scalable, caption- and preprocessing-free.
+                </p>
+                <p>
+                    An overview of the video is available at a glance, and any region can be recursively zoomed into,
+                    with the same visual representation used uniformly for the video, intermediate investigations, and
+                    the agent's memory, eliminating lossy text conversion end-to-end. This hierarchical structure
+                    ensures access depth grows only logarithmically with video length.
+                </p>
+                <p>
+                    VideoAtlas as a Markov Decision Process unlocks <strong>Video-RLM</strong>: a parallel Master-Worker
+                    architecture where a Master coordinates global exploration while Workers concurrently drill into
+                    assigned regions to accumulate lossless visual evidence. We demonstrate three key findings: (1)
+                    logarithmic compute growth with video duration, (2) environment budgeting via maximum exploration
+                    depth, and (3) emergent adaptive compute allocation. On benchmarks spanning up to 10 hours,
+                    Video-RLM achieves competitive accuracy against standard approaches, demonstrating that video
+                    understanding can be effectively reformulated as structured environment navigation.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section white">
+        <div class="container">
+            <h2 class="section-title">Methodology</h2>
+
+            <h3 style="text-align: center; margin-bottom: 20px;">The VideoAtlas Environment</h3>
+            <div class="figure-container">
+                <img src="figures/VideoAtlas.png" alt="The VideoAtlas Environment">
+                <p class="figure-caption">
+                    <strong>The VideoAtlas Environment.</strong> (Left) The state space is a hierarchical grid stack
+                    where deeper levels provide finer temporal resolution. (Top Right) Discrete action space for
+                    navigation and perception. (Bottom Right) The visual scratchpad memory accumulates multimodal
+                    evidence across exploration rounds.
+                </p>
+            </div>
+
+            <h3 style="text-align: center; margin-top: 60px; margin-bottom: 20px;">Video-RLM Architecture</h3>
+            <div class="figure-container">
+                <img src="figures/grid2.png" alt="Video-RLM Architecture">
+                <p class="figure-caption">
+                    <strong>Video-RLM overview.</strong> The Master examines the root grid and scratchpad, assigning
+                    promising cells to Workers. Workers autonomously explore their assigned regions via navigation and
+                    perception. The Master then performs uncertainty analysis to decide if evidence is sufficient to
+                    answer the query.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="examples">
+        <div class="container">
+            <h2 class="section-title">Exploration Examples</h2>
+            <p style="text-align: center; margin-bottom: 40px;">
+                Watch how Video-RLM navigates the hierarchical grid to pinpoint specific events within long-form videos.
+            </p>
+
+            <div class="video-grid">
+                <div class="video-card">
+                    <video controls muted preload="metadata">
+                        <source src="examples/football/replay.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-title">Football Match Analysis</div>
+                </div>
+
+                <div class="video-card">
+                    <video controls muted preload="metadata">
+                        <source src="examples/frieren/replay.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-title">Frieren Anime Episode</div>
+                </div>
+
+                <div class="video-card">
+                    <video controls muted preload="metadata">
+                        <source src="examples/john_wick/replay.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-title">John Wick Movie Scene</div>
+                </div>
+
+                <div class="video-card">
+                    <video controls muted preload="metadata">
+                        <source src="examples/narrator/replay.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-title">Narrator Position</div>
+                </div>
+
+                <div class="video-card">
+                    <video controls muted preload="metadata">
+                        <source src="examples/desert/replay.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-title">Desert Landscape</div>
+                </div>
+
+                <div class="video-card">
+                    <video controls muted preload="metadata">
+                        <source src="examples/documentary/replay.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-title">Documentary Movie</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="section white">
+        <div class="container">
+            <h2 class="section-title">Logarithmic Compute Scaling</h2>
+            <div class="figure-container">
+                <img src="figures/scaling_law_final3.png" alt="Logarithmic compute scaling graph">
+                <p class="figure-caption">
+                    <strong>Logarithmic compute scaling with video duration.</strong> Video-RLM's hierarchical grid
+                    grows sub-linearly (O(log T)), requiring up to 5.7× fewer tokens than linear-scaling baselines. A
+                    uniform VLM maxes out its context trading off sampled frame count with resolution.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title" style="text-align: left;">BibTeX</h2>
+            <pre><code>@article{eltahir2026videoatlas,
+  title={VideoAtlas: Navigating Long-Form Video in Logarithmic Compute},
+  author={Eltahir, Mohamed and Habibullah, Ali and Alshoibi, Yazan and Ayash, Lama and Hussain, Tanveer and Khan, Naeemullah},
+  journal={arXiv preprint},
+  year={2026}
+}</code></pre>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>
+                This website is structured for the presentation of the VideoAtlas paper. <br>
+                Source code and datasets will be linked upon public release.
+            </p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

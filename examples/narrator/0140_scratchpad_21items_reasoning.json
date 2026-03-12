@@ -1,0 +1,149 @@
+[
+  {
+    "letter": "A",
+    "time": 0,
+    "confidence": 0.8,
+    "description": "At 0.0s, there are two people in a podcast setting. One is wearing a red hoodie (narrator in red) and the other is wearing a greyish-brown jacket which might be the 'narrator in green' mentioned in the query. They are both facing forward/slightly towards each other.",
+    "subtitle": ""
+  },
+  {
+    "letter": "B",
+    "time": 3.5,
+    "confidence": 0.9,
+    "description": "At 3.5s, only the narrator in a green hoodie is visible. He is facing forward and slightly to his left, looking at a laptop. There is no narrator in red visible in this frame. This helps because it establishes that this specific frame does not show both narrators, requiring further search.",
+    "subtitle": ""
+  },
+  {
+    "letter": "C",
+    "time": 91.1,
+    "confidence": 0.9,
+    "description": "In frames 1 and 2, a narrator in a green (teal) shirt is on the left, facing right towards a narrator in a black hoodie. This helps because it establishes the position and orientation of the narrator in green.",
+    "subtitle": ""
+  },
+  {
+    "letter": "D",
+    "time": 94,
+    "confidence": 0.8,
+    "description": "The narrator in green (Marques Brownlee) is shown in the first frame at 94.0s. He is facing forward. The narrator in red (David Imel) is shown in frames 2, 3, and 5. This helps because it identifies the two narrators.",
+    "subtitle": ""
+  },
+  {
+    "letter": "E",
+    "time": 113,
+    "confidence": 0.9,
+    "description": "In the leftmost sub-frame, the narrator in red is facing left. This helps determine his orientation relative to others in the studio.",
+    "subtitle": ""
+  },
+  {
+    "letter": "F",
+    "time": 161.6,
+    "confidence": 0.8,
+    "description": "The person in the frame is wearing a green hoodie. This might be the 'narrator in green'. I need to find a 'narrator in red' and see their relative positions.",
+    "subtitle": ""
+  },
+  {
+    "letter": "G",
+    "time": 211.5,
+    "confidence": 0.9,
+    "description": "At 211.5s, the narrator in green (Marques) is seen in a separate shot facing towards the right. The narrator in red (Andrew) is seen in a different shot facing towards the left. This indicates they are facing each other. Relative to the narrator in green, the narrator in red is facing him (to the left from the red narrator's perspective).",
+    "subtitle": ""
+  },
+  {
+    "letter": "H",
+    "time": 229.3,
+    "confidence": 0.9,
+    "description": "At 229.3s, the narrator in green (Marques Brownlee) is visible, facing forward and slightly to his right. This helps identify one of the narrators and their orientation.",
+    "subtitle": ""
+  },
+  {
+    "letter": "I",
+    "time": 288.3,
+    "confidence": 0.8,
+    "description": "At 288.3s, the narrator in red (Andrew) is visible in the second panel from the left, and the narrator in green (Marques) is visible in the subsequent panels. Andrew is facing his right. Marques is facing forward. This helps identify the individuals but not their relative positions yet.",
+    "subtitle": ""
+  },
+  {
+    "letter": "J",
+    "time": 311,
+    "confidence": 0.9,
+    "description": "The narrator in the red hoodie is on the right side of the frame, and the narrator in the dark jacket (possibly the one referred to as 'green') is on the left. The narrator in red is facing towards the left, which is the direction of the other narrator.",
+    "subtitle": ""
+  },
+  {
+    "letter": "K",
+    "time": 339.3,
+    "confidence": 0.9,
+    "description": "The narrator in red is on the right side of the frame and is facing towards the left, which is the direction of the other narrator. The other narrator (presumably the one in green, though the jacket looks dark grey/olive) is on the left side of the frame and is facing towards the right. This helps identify their relative orientations.",
+    "subtitle": ""
+  },
+  {
+    "letter": "L",
+    "time": 357.1,
+    "confidence": 1,
+    "description": "At 357.1s, the narrator in green (Marques Brownlee) is shown in a sequence of frames. In the first two frames, he is facing to his right (viewer's left). In the subsequent frames, he faces more towards the camera/microphone. No narrator in red is visible in these specific frames. This helps by establishing the orientation of the narrator in green.",
+    "subtitle": ""
+  },
+  {
+    "letter": "M",
+    "time": 366.8,
+    "confidence": 1,
+    "description": "At 366.8s, only the narrator in green (Marques Brownlee) is visible. He is wearing a green hoodie and facing towards his right (the viewer's left). There is no narrator in red visible in this frame.",
+    "subtitle": ""
+  },
+  {
+    "letter": "N",
+    "time": 369.7,
+    "confidence": 0.8,
+    "description": "Narrator in red (red hoodie) is on the right side of the screen in cells 0-26 and 54-57, looking to his left. This helps the search task because it indicates his position and orientation.",
+    "subtitle": ""
+  },
+  {
+    "letter": "O",
+    "time": 373.5,
+    "confidence": 0.9,
+    "description": "The narrator in red is shown in cells 0-17, 48-51, and 62-63. He is positioned on the right side of his frame and is facing towards the left. The narrator in green is shown in cells 18-22, positioned in the center of his frame and facing towards the right. This indicates they are likely sitting across from each other, meaning the narrator in red is facing the narrator in green.",
+    "subtitle": ""
+  },
+  {
+    "letter": "P",
+    "time": 382.4,
+    "confidence": 0.8,
+    "description": "Narrator in green (olive green jacket) is centered in cells 27-31, looking to his right. This helps the search task because it indicates his position and orientation.",
+    "subtitle": ""
+  },
+  {
+    "letter": "Q",
+    "time": 404,
+    "confidence": 0.9,
+    "description": "In the first panel of the composite, a narrator in a red hoodie is on the right side of the frame, facing left. This helps determine his orientation.",
+    "subtitle": ""
+  },
+  {
+    "letter": "R",
+    "time": 424.5,
+    "confidence": 0.8,
+    "description": "The narrator in green (green hoodie) is seen in cells 0-24, facing towards the right of the frame. The narrator in red (red hoodie) appears in cells 62-63, sitting on the right side of the frame and facing left. This helps the search task because it establishes their individual positions and orientations.",
+    "subtitle": ""
+  },
+  {
+    "letter": "S",
+    "time": 454.2,
+    "confidence": 1,
+    "description": "At 454.2s, the narrator in red is facing towards the right side of the screen, while the narrator in green is facing towards the left side of the screen. This indicates they are facing each other.",
+    "subtitle": ""
+  },
+  {
+    "letter": "T",
+    "time": 490.6,
+    "confidence": 0.9,
+    "description": "The narrator in red (Andrew) is facing towards the left of the frame in the first four panels. The narrator in green (Marques) is facing towards the right of the frame in the last panel. This suggests they are facing each other.",
+    "subtitle": ""
+  },
+  {
+    "letter": "U",
+    "time": 491.8,
+    "confidence": 0.7,
+    "description": "The image shows Marques Brownlee in a green hoodie. This identifies the 'narrator in green'. I need to find the 'narrator in red'.",
+    "subtitle": ""
+  }
+]

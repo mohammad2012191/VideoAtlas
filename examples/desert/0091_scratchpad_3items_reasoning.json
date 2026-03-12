@@ -1,0 +1,23 @@
+[
+  {
+    "letter": "A",
+    "time": 500,
+    "confidence": 0.8,
+    "description": "The video is currently at 500s showing a festival with people and camels. The search task is to find giraffe carvings. I need to look for scenes with rock art.",
+    "subtitle": "[Music]"
+  },
+  {
+    "letter": "B",
+    "time": 1403.9,
+    "confidence": 0.8,
+    "description": "At 1403.9s, the video shows rock carvings of animals (giraffes/long-necked animals) and the narrator mentions they are 'animals long gone from this desolate wilderness'. This suggests the environment changed, supporting the 'Climate change' option.",
+    "subtitle": "i'll take some photographs of this this is great they're animals long gone from this | desolate wilderness yet their images have been faithfully recorded in stone"
+  },
+  {
+    "letter": "C",
+    "time": 1418.6,
+    "confidence": 1,
+    "description": "The narrator explicitly mentions 'the power of climate change' as the reason why images of giraffes and other animals are found in what is now a desolate desert, explaining that the area was once lush savanna land where these animals lived. This directly identifies climate change as the primary reason for the presence of these images in a desert environment.",
+    "subtitle": "it just goes to show the power of climate change when tootin carmen set on the egyptian"
+  }
+]

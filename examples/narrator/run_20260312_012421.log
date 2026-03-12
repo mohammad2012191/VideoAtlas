@@ -1,0 +1,483 @@
+============================================================
+VIDEO EXPLORER — Run started
+  Video:      videos/NCNeFSJexSY.mp4
+  Subtitles:  (none)
+  Question:   Which direction is the narrator in red facing\nrelative to the narrator in green?
+  Candidates: []
+  Log file:   results\run_20260312_012421.log
+============================================================
+[TASK] Original: In the given video, Which direction is the narrator in red facing\nrelative to the narrator in green?...
+[TASK] Search task: Locate the frames where both the narrator
+
+============================================================
+[MASTER] Phase 1: Master Analysis (global grid)
+[IMG] Saved: results\run_20260312_012421_images\0001_grid_c1174s_span2348s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0002_global_grid.jpg
+[PROBE] Raw: ```json
+{"top": [{"r": "This frame features the narrator in a red hoodie, showing his position and orientation on the right side of the podcast set.", "id": 3}, {"r": "The narrator in a red hoodie is clearly visible here, allowing for an assessment of his seating position relative to the camera and the set.", "id": 8}, {"r":
+[PROBE] Parse failed: Expecting ',' delimiter: line 1 column 312 (char 311)
+[MASTER] Analysis done: 2 ratings, 0 evidence
+
+============================================================
+[MASTER] Phase 2: DFS (budget=512, 8/cell)
+
+============================================================
+[ROUND 1] 7 workers | Calls: 0/512
+[IMG] Saved: results\run_20260312_012421_images\0003_DFS_round1_masked_grid.jpg
+  [W1|C3] Start [110.0-146.7s] budget=8
+  [W2|C8] Start [293.4-330.1s] budget=8
+  [W3|C0] Start [0.0-36.7s] budget=8
+  [W4|C1] Start [36.7-73.4s] budget=8
+  [W5|C2] Start [73.4-110.0s] budget=8
+  [W6|C4] Start [146.7-183.4s] budget=8
+  [W7|C5] Start [183.4-220.1s] budget=8
+[PROBE] Raw: To determine the relative direction the narrator in red is facing compared to the narrator in green, we need to examine frames where each is clearly visible to establish their positions in the studio setup. The video uses a multi-camera setup where the narrators are shown in separate shots but are clearly part of the same discussion.
+
+1. This frame provides a clear shot of the narrator in red on the right
+[PROBE] Parse failed: No JSON object found in output: 'To determine the relative direction the narrator in red is facing compared to the narrator in green, we need to examine frames where each is clearly visible to establish their positions in the studio '
+[IMG] Saved: results\run_20260312_012421_images\0004_grid_c92s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0005_W5_C2_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0006_grid_c18s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0007_W3_C0_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0008_grid_c202s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0009_W7_C5_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0010_grid_c128s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0011_W1_C3_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0012_grid_c312s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0013_W2_C8_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0014_grid_c55s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0015_W4_C1_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0016_grid_c165s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0017_W6_C4_step0.jpg
+  [W5|C2] Step 0 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":36}}</tool_call>...
+  [W5|C2] Step 0 PARSED: ['EXPAND']
+[NAV] Pushed: center=91.7, span=36.7 (depth=1)
+  [W7|C5] Step 0 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":3,"timestamp":211.5}}</tool_call>...
+  [W7|C5] Step 0 PARSED: ['ZOOM']
+  [W7|C5] ZOOM @ 211.5s
+[IMG] Saved: results\run_20260312_012421_images\0018_zoom_211.5s.jpg
+  [W3|C0] Step 0 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":8}}</tool_call>...
+  [W3|C0] Step 0 PARSED: ['EXPAND']
+[NAV] Pushed: center=18.3, span=36.7 (depth=1)
+  [W4|C1] Step 0 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":0}}</tool_call>...
+  [W4|C1] Step 0 PARSED: ['ZOOM']
+  [W4|C1] ZOOM @ 0.0s
+  [W1|C3] Step 0 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":0}}</tool_call>...
+  [W1|C3] Step 0 PARSED: ['EXPAND']
+[NAV] Pushed: center=128.4, span=36.7 (depth=1)
+[IMG] Saved: results\run_20260312_012421_images\0019_zoom_0.0s.jpg
+  [W6|C4] Step 0 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":26}}</tool_call>...
+  [W6|C4] Step 0 PARSED: ['EXPAND']
+[NAV] Pushed: center=165.1, span=36.7 (depth=1)
+  [W2|C8] Step 0 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":311.2}}</tool_call>...
+  [W2|C8] Step 0 PARSED: ['ZOOM']
+  [W2|C8] ZOOM @ 311.2s
+[IMG] Saved: results\run_20260312_012421_images\0020_grid_c94s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0021_W5_C2_step1.jpg
+[IMG] Saved: results\run_20260312_012421_images\0022_zoom_311.2s.jpg
+  [W4|C1] Done: 1 evidence, 0 promising, status=explored
+  [W5|C2] Step 1 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W5|C2] Step 1 PARSED: ['BACKTRACK']
+[NAV] Popped: center=91.7, span=36.7 (depth=0)
+[IMG] Saved: results\run_20260312_012421_images\0023_grid_c5s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0024_W3_C0_step1.jpg
+[IMG] Saved: results\run_20260312_012421_images\0025_grid_c110s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0026_W1_C3_step1.jpg
+  [W3|C0] Step 1 RAW: <tool_call>{"name": "ZOOM", "arguments": {"timestamp":3.5}}</tool_call>...
+  [W3|C0] Step 1 PARSED: ['ZOOM']
+  [W3|C0] ZOOM @ 3.5s
+[IMG] Saved: results\run_20260312_012421_images\0027_zoom_3.5s.jpg
+  [W1|C3] Step 1 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W1|C3] Step 1 PARSED: ['BACKTRACK']
+[NAV] Popped: center=128.4, span=36.7 (depth=0)
+[IMG] Saved: results\run_20260312_012421_images\0028_grid_c162s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0029_W6_C4_step1.jpg
+[IMG] Saved: results\run_20260312_012421_images\0030_grid_c92s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0031_W5_C2_step2.jpg
+[IMG] Saved: results\run_20260312_012421_images\0032_grid_c202s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0033_W7_C5_step1.jpg
+[IMG] Saved: results\run_20260312_012421_images\0034_grid_c312s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0035_W2_C8_step1.jpg
+  [W3|C0] Done: 1 evidence, 0 promising, status=explored
+  [W6|C4] Step 1 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W6|C4] Step 1 PARSED: ['BACKTRACK']
+[NAV] Popped: center=165.1, span=36.7 (depth=0)
+  [W7|C5] Step 1 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":212.1}}</tool_call>...
+  [W7|C5] Step 1 PARSED: ['ZOOM']
+  [W7|C5] ZOOM @ 212.1s
+  [W5|C2] Step 2 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":91.09999999999999}}</tool_call>...
+  [W5|C2] Step 2 PARSED: ['ZOOM']
+  [W5|C2] ZOOM @ 91.1s
+[IMG] Saved: results\run_20260312_012421_images\0036_zoom_91.1s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0037_zoom_212.1s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0038_grid_c128s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0039_W1_C3_step2.jpg
+  [W2|C8] Step 1 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":311}}</tool_call>...
+  [W2|C8] Step 1 PARSED: ['ZOOM']
+  [W2|C8] ZOOM @ 311.0s
+[IMG] Saved: results\run_20260312_012421_images\0040_zoom_311.0s.jpg
+  [W7|C5] Done: 2 evidence, 0 promising, status=explored
+[IMG] Saved: results\run_20260312_012421_images\0041_grid_c165s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0042_W6_C4_step2.jpg
+  [W6|C4] Step 2 RAW: <tool_call>{"name": "ZOOM", "arguments": {"timestamp":161.6}}</tool_call>...
+  [W6|C4] Step 2 PARSED: ['ZOOM']
+  [W6|C4] ZOOM @ 161.6s
+[IMG] Saved: results\run_20260312_012421_images\0043_zoom_161.6s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0044_grid_c312s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0045_W2_C8_step2.jpg
+  [W1|C3] Step 2 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":113}}</tool_call>...
+  [W1|C3] Step 2 PARSED: ['ZOOM']
+  [W1|C3] ZOOM @ 113.0s
+[IMG] Saved: results\run_20260312_012421_images\0046_zoom_113.0s.jpg
+  [W6|C4] Done: 1 evidence, 0 promising, status=explored
+  [W2|C8] Step 2 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":311}}</tool_call>...
+  [W2|C8] Step 2 PARSED: ['ZOOM']
+  [W2|C8] ZOOM @ 311.0s
+[IMG] Saved: results\run_20260312_012421_images\0047_zoom_311.0s.jpg
+  [W1|C3] Done: 3 evidence, 0 promising, status=explored
+[IMG] Saved: results\run_20260312_012421_images\0048_grid_c312s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0049_W2_C8_step3.jpg
+  [W2|C8] Step 3 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":0.6,"timestamp":310.9}}</tool_call>...
+  [W2|C8] Step 3 PARSED: ['ZOOM']
+  [W2|C8] ZOOM @ 310.9s
+[IMG] Saved: results\run_20260312_012421_images\0050_zoom_310.9s.jpg
+  [W2|C8] Done: 4 evidence, 0 promising, status=explored
+[IMG] Saved: results\run_20260312_012421_images\0051_grid_c92s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0052_W5_C2_step3.jpg
+  [W5|C2] Step 3 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":94}}</tool_call>...
+  [W5|C2] Step 3 PARSED: ['ZOOM']
+  [W5|C2] ZOOM @ 94.0s
+[IMG] Saved: results\run_20260312_012421_images\0053_zoom_94.0s.jpg
+  [W5|C2] Done: 4 evidence, 0 promising, status=explored
+[SCRATCHPAD] Added: @0.0s (Conf: 0.8) - At 0.0s, there are two people in a podcast setting. One is wearing a red hoodie (narrator in red) and the other is wearing a greyish-brown jacket which might be the 'narrator in green' mentioned in the query. They are both facing forward/slightly towards each other.. (1/99999)
+[SCRATCHPAD] Added: @3.5s (Conf: 0.9) - At 3.5s, only the narrator in a green hoodie is visible. He is facing forward and slightly to his left, looking at a laptop. There is no narrator in red visible in this frame. This helps because it establishes that this specific frame does not show both narrators, requiring further search.. (2/99999)
+[SCRATCHPAD] Added: @211.5s (Conf: 0.9) - At 211.5s, the narrator in green (Marques) is seen in a separate shot facing towards the right. The narrator in red (Andrew) is seen in a different shot facing towards the left. This indicates they are facing each other. Relative to the narrator in green, the narrator in red is facing him (to the left from the red narrator's perspective).. (3/99999)
+[SCRATCHPAD] Skipped @212.1s (duplicate of @211.5s)
+[SCRATCHPAD] Added: @161.6s (Conf: 0.8) - The person in the frame is wearing a green hoodie. This might be the 'narrator in green'. I need to find a 'narrator in red' and see their relative positions.. (4/99999)
+[SCRATCHPAD] Added: @113.0s (Conf: 0.9) - In the leftmost sub-frame, the narrator in red is facing left. This helps determine his orientation relative to others in the studio.. (5/99999)
+[SCRATCHPAD] Skipped @113.0s (duplicate of @113.0s)
+[SCRATCHPAD] Skipped @113.0s (duplicate of @113.0s)
+[SCRATCHPAD] Added: @311.2s (Conf: 0.8) - At 311.2s, the narrator in a red hoodie is sitting to the right of a narrator in a dark grey/black jacket. The narrator in red is frequently facing towards the narrator on the left (his right, viewer's left) or straight ahead. This helps identify the relative positions and orientations of the narrators, although a 'narrator in green' is not clearly identifiable in this specific frame.. (6/99999)
+[SCRATCHPAD] Replacing @311.2s with better @311.0s
+[SCRATCHPAD] Skipped @311.0s (duplicate of @311.0s)
+[SCRATCHPAD] Skipped @310.9s (duplicate of @311.0s)
+[SCRATCHPAD] Added: @91.1s (Conf: 0.9) - In frames 1 and 2, a narrator in a green (teal) shirt is on the left, facing right towards a narrator in a black hoodie. This helps because it establishes the position and orientation of the narrator in green.. (7/99999)
+[SCRATCHPAD] Skipped @91.1s (duplicate of @91.1s)
+[SCRATCHPAD] Skipped @91.1s (duplicate of @91.1s)
+[SCRATCHPAD] Added: @94.0s (Conf: 0.8) - The narrator in green (Marques Brownlee) is shown in the first frame at 94.0s. He is facing forward. The narrator in red (David Imel) is shown in frames 2, 3, and 5. This helps because it identifies the two narrators.. (8/99999)
+[DFS] Evidence: 8 | Frontier: explored: 7, open: 57
+[IMG] Saved: results\run_20260312_012421_images\0054_DFS_round1_uncertainty_grid.jpg
+[IMG] Saved: results\run_20260312_012421_images\0055_scratchpad_8items.jpg
+[SCRATCHPAD] Reasoning saved: results\run_20260312_012421_images\0055_scratchpad_8items_reasoning.json
+[MASTER] Uncertainty raw: ```json
+{"reasoning": "Based on the visual evidence from the video frames, there are two primary narrators identified by their clothing: one in a green/olive hoodie (Marques) and one in a red hoodie (Andrew). Throughout the video, the narrator in green is consistently positioned on the left side of the studio setup (from the camera's perspective) and is facing towards
+[MASTER] Uncertainty parse failed: No JSON object found in output: '```json\n{"reasoning": "Based on the visual evidence from the video frames, there are two primary narrators identified by their clothing: one in a green/olive hoodie (Marques) and one in a red hoodie (', retrying...
+[MASTER] Uncertainty JSON repair attempt 1 succeeded
+[MASTER] Uncertainty: CONTINUE — Based on the visual evidence from the video frames, there are two primary narrators identified by their clothing: one in a green/olive hoodie (Marques) and one in a red hoodie (Andrew). Throughout the video, the narrator in green is consistently positioned on the left side of the studio setup (from the camera's perspective) and is facing towards the narrator in red.
+
+============================================================
+[ROUND 2] 7 workers | Calls: 56/512
+[IMG] Saved: results\run_20260312_012421_images\0056_DFS_round2_masked_grid.jpg
+  [W1|C6] Start [220.1-256.8s] budget=8
+  [W2|C7] Start [256.8-293.4s] budget=8
+  [W3|C9] Start [330.1-366.8s] budget=8
+  [W4|C10] Start [366.8-403.5s] budget=8
+  [W5|C11] Start [403.5-440.2s] budget=8
+  [W6|C12] Start [440.2-476.9s] budget=8
+  [W7|C13] Start [476.9-513.5s] budget=8
+[PROBE] Raw: ```json
+{"top": [{"r": "This frame clearly shows the narrator in the red hoodie on the right side of the screen, providing a view of his position and the direction he is facing.", "id": 14}, {"r": "The narrator in the green hoodie is shown here, allowing for a comparison of his seating position and orientation relative to the other narrators in
+[PROBE] Parse failed: Expecting ',' delimiter: line 1 column 182 (char 181)
+[IMG] Saved: results\run_20260312_012421_images\0057_grid_c275s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0058_W2_C7_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0059_grid_c238s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0060_W1_C6_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0061_grid_c495s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0062_W7_C13_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0063_grid_c385s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0064_W4_C10_step0.jpg
+  [W2|C7] Step 0 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":0.6,"timestamp":288.3}}</tool_call>...
+  [W2|C7] Step 0 PARSED: ['ZOOM']
+  [W2|C7] ZOOM @ 288.3s
+[IMG] Saved: results\run_20260312_012421_images\0065_zoom_288.3s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0066_grid_c422s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0067_W5_C11_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0068_grid_c348s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0069_W3_C9_step0.jpg
+[IMG] Saved: results\run_20260312_012421_images\0070_grid_c459s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0071_W6_C12_step0.jpg
+  [W2|C7] Done: 1 evidence, 0 promising, status=explored
+  [W1|C6] Step 0 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":0.6,"timestamp":229.3}}</tool_call>...
+  [W1|C6] Step 0 PARSED: ['ZOOM']
+  [W1|C6] ZOOM @ 229.3s
+[IMG] Saved: results\run_20260312_012421_images\0072_zoom_229.3s.jpg
+  [W4|C10] Step 0 RAW: <tool_call>{"name": "INVESTIGATE", "arguments": {"direction":"after","reason":"Looking for a wide shot or transition that shows both narrators.","timestamp":369.7}}</tool_call>...
+  [W4|C10] Step 0 PARSED: ['INVESTIGATE']
+  [W4|C10] INVESTIGATE after @369.7s: Looking for a wide shot or transition that shows both narrators.
+  [W6|C12] Step 0 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":1.5,"timestamp":454.5}}</tool_call>...
+  [W6|C12] Step 0 PARSED: ['ZOOM']
+  [W6|C12] ZOOM @ 454.5s
+  [W7|C13] Step 0 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":1.1,"timestamp":490.6}}</tool_call>
+<tool_call>{"name": "ZOOM", "arguments": {"duration":1.2,"timestamp":491.8}}</tool_call>...
+  [W7|C13] Step 0 PARSED: ['ZOOM', 'ZOOM']
+  [W7|C13] ZOOM @ 490.6s
+[IMG] Saved: results\run_20260312_012421_images\0073_zoom_454.5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0074_zoom_490.6s.jpg
+  [W3|C9] Step 0 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":31}}</tool_call>...
+  [W3|C9] Step 0 PARSED: ['EXPAND']
+[NAV] Pushed: center=348.5, span=36.7 (depth=1)
+  [W7|C13] ZOOM @ 491.8s
+[IMG] Saved: results\run_20260312_012421_images\0075_zoom_491.8s.jpg
+  [W5|C11] Step 0 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":0}}</tool_call>...
+  [W5|C11] Step 0 PARSED: ['EXPAND']
+[NAV] Pushed: center=421.8, span=36.7 (depth=1)
+  [W7|C13] Done: 2 evidence, 0 promising, status=explored
+[IMG] Saved: results\run_20260312_012421_images\0076_grid_c385s_span30s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0077_grid_c348s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0078_W3_C9_step1.jpg
+[IMG] Saved: results\run_20260312_012421_images\0079_grid_c404s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0080_W5_C11_step1.jpg
+  [W3|C9] Step 1 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W3|C9] Step 1 PARSED: ['BACKTRACK']
+[NAV] Popped: center=348.5, span=36.7 (depth=0)
+[IMG] Saved: results\run_20260312_012421_images\0081_grid_c459s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0082_W6_C12_step1.jpg
+[IMG] Saved: results\run_20260312_012421_images\0083_grid_c238s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0084_W1_C6_step1.jpg
+  [W5|C11] Step 1 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W5|C11] Step 1 PARSED: ['BACKTRACK']
+[NAV] Popped: center=421.8, span=36.7 (depth=0)
+  [W1|C6] Step 1 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":229.5}}</tool_call>...
+  [W1|C6] Step 1 PARSED: ['ZOOM']
+  [W1|C6] ZOOM @ 229.5s
+  [W6|C12] Step 1 RAW: <tool_call>{"name": "INVESTIGATE", "arguments": {"direction":"before","reason":"To check if there's a wide shot showing both the narrator in green and the narrator in red before the solo shot of the green narrator.","timestamp":454.5}}</tool_call>...
+  [W6|C12] Step 1 PARSED: ['INVESTIGATE']
+  [W6|C12] INVESTIGATE before @454.5s: To check if there's a wide shot showing both the narrator in green and the narrator in red before the solo shot of the green narrator.
+[IMG] Saved: results\run_20260312_012421_images\0085_zoom_229.5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0086_grid_c348s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0087_W3_C9_step2.jpg
+  [W1|C6] Done: 2 evidence, 0 promising, status=explored
+  [W3|C9] Step 2 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":0.6,"timestamp":339}}</tool_call>
+<tool_call>{"name": "ZOOM", "arguments": {"duration":0.6,"timestamp":357.3}}</tool_call>...
+  [W3|C9] Step 2 PARSED: ['ZOOM', 'ZOOM']
+  [W3|C9] ZOOM @ 339.0s
+[IMG] Saved: results\run_20260312_012421_images\0088_grid_c422s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0089_W5_C11_step2.jpg
+[IMG] Saved: results\run_20260312_012421_images\0090_zoom_339.0s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0091_grid_c440s_span30s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0092_grid_c385s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0093_W4_C10_step1.jpg
+  [W5|C11] Step 2 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":0}}</tool_call>...
+  [W5|C11] Step 2 PARSED: ['EXPAND']
+[NAV] Pushed: center=421.8, span=36.7 (depth=1)
+  [W4|C10] Step 1 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":5}}</tool_call>...
+  [W4|C10] Step 1 PARSED: ['EXPAND']
+[NAV] Pushed: center=385.1, span=36.7 (depth=1)
+  [W3|C9] ZOOM @ 357.3s
+[IMG] Saved: results\run_20260312_012421_images\0094_zoom_357.3s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0095_grid_c404s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0096_W5_C11_step3.jpg
+  [W5|C11] Step 3 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W5|C11] Step 3 PARSED: ['BACKTRACK']
+[NAV] Popped: center=421.8, span=36.7 (depth=0)
+[IMG] Saved: results\run_20260312_012421_images\0097_grid_c370s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0098_W4_C10_step2.jpg
+[IMG] Saved: results\run_20260312_012421_images\0099_grid_c459s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0100_W6_C12_step2.jpg
+  [W6|C12] Step 2 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":2,"timestamp":454.5}}</tool_call>...
+  [W6|C12] Step 2 PARSED: ['ZOOM']
+  [W6|C12] ZOOM @ 454.5s
+  [W4|C10] Step 2 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W4|C10] Step 2 PARSED: ['BACKTRACK']
+[NAV] Popped: center=385.1, span=36.7 (depth=0)
+[IMG] Saved: results\run_20260312_012421_images\0101_zoom_454.5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0102_grid_c348s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0103_W3_C9_step3.jpg
+[IMG] Saved: results\run_20260312_012421_images\0104_grid_c422s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0105_W5_C11_step4.jpg
+  [W5|C11] Step 4 RAW: <tool_call>{"name": "INVESTIGATE", "arguments": {"direction":"before","reason":"To see if there is a wide shot showing both the narrator in red and the narrator in green together before the current segment.","timestamp":403.5}}</tool_call>...
+  [W5|C11] Step 4 PARSED: ['INVESTIGATE']
+  [W5|C11] INVESTIGATE before @403.5s: To see if there is a wide shot showing both the narrator in red and the narrator in green together before the current segment.
+  [W3|C9] Step 3 RAW: <tool_call>{"name": "ADD_TO_SCRATCHPAD", "arguments": {"items":[{"confidence":0.8,"description":"The narrator in red is on the right side of a split screen, facing towards the left of the frame. This helps because it establishes his orientation relative to the camera.","timestamp":339.3},{"confidence":0.8,"description":"The narrator in green is shown in a single shot, facing towards the left of the frame. This helps because it establishes his orientation relative to the camera.","timestamp":357.1}]}}</tool_call>
+<tool_call>{"name": "ZOOM", "arguments": {"duration":2,"timestamp":339.3}}</tool_call>
+<tool_call>{"name": "ZOOM", "arguments": {"duration":2,"timestamp":357.1}}</tool_call>...
+  [W3|C9] Step 3 PARSED: ['ADD_TO_SCRATCHPAD', 'ZOOM', 'ZOOM']
+  [W3|C9] EVIDENCE: @339.3s conf=0.8 'The narrator in red is on the right side of a split screen, facing towards the left of the frame. This helps because it establishes his orientation relative to the camera.'
+  [W3|C9] EVIDENCE: @357.1s conf=0.8 'The narrator in green is shown in a single shot, facing towards the left of the frame. This helps because it establishes his orientation relative to the camera.'
+  [W3|C9] ZOOM @ 339.3s
+[IMG] Saved: results\run_20260312_012421_images\0106_zoom_339.3s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0107_grid_c385s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0108_W4_C10_step3.jpg
+[IMG] Saved: results\run_20260312_012421_images\0109_grid_c459s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0110_W6_C12_step3.jpg
+  [W3|C9] ZOOM @ 357.1s
+[IMG] Saved: results\run_20260312_012421_images\0111_zoom_357.1s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0112_grid_c388s_span30s.jpg
+  [W6|C12] Step 3 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":1.7,"timestamp":454.2}}</tool_call>...
+  [W6|C12] Step 3 PARSED: ['ZOOM']
+  [W6|C12] ZOOM @ 454.2s
+[IMG] Saved: results\run_20260312_012421_images\0113_zoom_454.2s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0114_grid_c348s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0115_W3_C9_step4.jpg
+  [W4|C10] Step 3 RAW: <tool_call>{"name": "EXPAND", "arguments": {"cell_id":4}}</tool_call>...
+  [W4|C10] Step 3 PARSED: ['EXPAND']
+[NAV] Pushed: center=385.1, span=36.7 (depth=1)
+[IMG] Saved: results\run_20260312_012421_images\0116_grid_c459s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0117_W6_C12_step4.jpg
+  [W3|C9] Step 4 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":2,"timestamp":339}}</tool_call>
+<tool_call>{"name": "ZOOM", "arguments": {"duration":2,"timestamp":357}}</tool_call>...
+  [W3|C9] Step 4 PARSED: ['ZOOM', 'ZOOM']
+  [W3|C9] ZOOM @ 339.0s
+[IMG] Saved: results\run_20260312_012421_images\0118_zoom_339.0s.jpg
+  [W6|C12] Step 4 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":1.2,"timestamp":454.5}}</tool_call>...
+  [W6|C12] Step 4 PARSED: ['ZOOM']
+  [W6|C12] ZOOM @ 454.5s
+[IMG] Saved: results\run_20260312_012421_images\0119_zoom_454.5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0120_grid_c369s_span5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0121_W4_C10_step4.jpg
+  [W3|C9] ZOOM @ 357.0s
+[IMG] Saved: results\run_20260312_012421_images\0122_zoom_357.0s.jpg
+  [W4|C10] Step 4 RAW: <tool_call>{"name": "BACKTRACK", "arguments": {}}</tool_call>...
+  [W4|C10] Step 4 PARSED: ['BACKTRACK']
+[NAV] Popped: center=385.1, span=36.7 (depth=0)
+  [W3|C9] Done: 8 evidence, 0 promising, status=explored
+[IMG] Saved: results\run_20260312_012421_images\0123_grid_c422s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0124_W5_C11_step5.jpg
+  [W6|C12] Done: 5 evidence, 0 promising, status=explored
+  [W5|C11] Step 5 RAW: <tool_call>{"name": "ADD_TO_SCRATCHPAD", "arguments": {"items":[{"confidence":0.8,"description":"Narrator in red (maroon hoodie) is seen in cells 0-4, positioned on the right and facing left. Narrator in green (olive hoodie) is seen in cells 10-56, mostly facing forward or left. This helps establish their individual positions but doesn't show them together yet.","timestamp":403.5}]}}</tool_call>
+<tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":404}}</tool_call>...
+  [W5|C11] Step 5 PARSED: ['ADD_TO_SCRATCHPAD', 'ZOOM']
+  [W5|C11] EVIDENCE: @403.5s conf=0.8 'Narrator in red (maroon hoodie) is seen in cells 0-4, positioned on the right and facing left. Narrator in green (olive hoodie) is seen in cells 10-56, mostly facing forward or left. This helps establish their individual positions but doesn't show them together yet.'
+  [W5|C11] ZOOM @ 404.0s
+[IMG] Saved: results\run_20260312_012421_images\0125_zoom_404.0s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0126_grid_c385s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0127_W4_C10_step5.jpg
+[IMG] Saved: results\run_20260312_012421_images\0128_grid_c422s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0129_W5_C11_step6.jpg
+  [W4|C10] Step 5 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":1.1,"timestamp":366.8}}</tool_call>...
+  [W4|C10] Step 5 PARSED: ['ZOOM']
+  [W4|C10] ZOOM @ 366.8s
+[IMG] Saved: results\run_20260312_012421_images\0130_zoom_366.8s.jpg
+  [W5|C11] Step 6 RAW: <tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":403.5}}</tool_call>...
+  [W5|C11] Step 6 PARSED: ['ZOOM']
+  [W5|C11] ZOOM @ 403.5s
+[IMG] Saved: results\run_20260312_012421_images\0131_zoom_403.5s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0132_grid_c385s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0133_W4_C10_step6.jpg
+  [W4|C10] Step 6 RAW: <tool_call>{"name": "ZOOM", "arguments": {"timestamp":366.8}}</tool_call>...
+  [W4|C10] Step 6 PARSED: ['ZOOM']
+  [W4|C10] ZOOM @ 366.8s
+[IMG] Saved: results\run_20260312_012421_images\0134_zoom_366.8s.jpg
+  [W5|C11] Done: 8 evidence, 0 promising, status=explored
+[IMG] Saved: results\run_20260312_012421_images\0135_grid_c385s_span37s.jpg
+[IMG] Saved: results\run_20260312_012421_images\0136_W4_C10_step7.jpg
+  [W4|C10] Step 7 RAW: <tool_call>{"name": "ADD_TO_SCRATCHPAD", "arguments": {"items":[{"confidence":0.8,"description":"The narrator in green (Marques) is seen in cells 0-4 and 32-36, facing slightly right. The narrator in red (Andrew) is seen in cells 5-31, 47-49, and 62-63, sitting on the right and facing left. This helps determine their relative orientation.","timestamp":366.8}]}}</tool_call>
+<tool_call>{"name": "ZOOM", "arguments": {"duration":5,"timestamp":370}}</tool_call>...
+  [W4|C10] Step 7 PARSED: ['ADD_TO_SCRATCHPAD', 'ZOOM']
+  [W4|C10] EVIDENCE: @366.8s conf=0.8 'The narrator in green (Marques) is seen in cells 0-4 and 32-36, facing slightly right. The narrator in red (Andrew) is seen in cells 5-31, 47-49, and 62-63, sitting on the right and facing left. This helps determine their relative orientation.'
+  [W4|C10] ZOOM @ 370.0s
+[IMG] Saved: results\run_20260312_012421_images\0137_zoom_370.0s.jpg
+  [W4|C10] Done: 7 evidence, 0 promising, status=explored
+[SCRATCHPAD] Added: @288.3s (Conf: 0.8) - At 288.3s, the narrator in red (Andrew) is visible in the second panel from the left, and the narrator in green (Marques) is visible in the subsequent panels. Andrew is facing his right. Marques is facing forward. This helps identify the individuals but not their relative positions yet.. (9/99999)
+[SCRATCHPAD] Added: @490.6s (Conf: 0.9) - The narrator in red (Andrew) is facing towards the left of the frame in the first four panels. The narrator in green (Marques) is facing towards the right of the frame in the last panel. This suggests they are facing each other.. (10/99999)
+[SCRATCHPAD] Added: @491.8s (Conf: 0.7) - The image shows Marques Brownlee in a green hoodie. This identifies the 'narrator in green'. I need to find the 'narrator in red'.. (11/99999)
+[SCRATCHPAD] Added: @229.3s (Conf: 0.9) - At 229.3s, the narrator in green (Marques Brownlee) is visible, facing forward and slightly to his right. This helps identify one of the narrators and their orientation.. (12/99999)
+[SCRATCHPAD] Skipped @229.5s (duplicate of @229.3s)
+[SCRATCHPAD] Added: @339.0s (Conf: 0.8) - At 339.0s, there are two narrators. One is wearing a red hoodie and the other is wearing a dark grey/brown jacket. The narrator in red is on the right side of the frame and is facing towards the left, where the other narrator is located. This helps identify the relative facing direction if the dark jacket is the one referred to as 'green'.. (13/99999)
+[SCRATCHPAD] Added: @357.3s (Conf: 0.8) - At 357.3s, the narrator in green (Marques Brownlee) is visible, facing towards his right (the viewer's left). This helps identify his orientation, which is likely towards the other narrator.. (14/99999)
+[SCRATCHPAD] Skipped @339.3s (duplicate of @339.0s)
+[SCRATCHPAD] Skipped @357.1s (duplicate of @357.3s)
+[SCRATCHPAD] Replacing @339.0s with better @339.3s
+[SCRATCHPAD] Replacing @357.3s with better @357.1s
+[SCRATCHPAD] Skipped @339.0s (duplicate of @339.3s)
+[SCRATCHPAD] Skipped @357.0s (duplicate of @357.1s)
+[SCRATCHPAD] Added: @454.5s (Conf: 0.8) - At 454.5s, the narrator in green (Marques Brownlee) is visible, looking down or to his right. This helps because it establishes his position and orientation, but the 'narrator in red' is not visible in these specific crops.. (15/99999)
+[SCRATCHPAD] Added: @424.5s (Conf: 0.8) - The narrator in green (green hoodie) is seen in cells 0-24, facing towards the right of the frame. The narrator in red (red hoodie) appears in cells 62-63, sitting on the right side of the frame and facing left. This helps the search task because it establishes their individual positions and orientations.. (16/99999)
+[SCRATCHPAD] Replacing @454.5s with better @454.5s
+[SCRATCHPAD] Replacing @454.5s with better @454.2s
+[SCRATCHPAD] Rejected @454.5s (conf=0.6 < 0.7)
+[SCRATCHPAD] Added: @373.5s (Conf: 0.9) - The narrator in red is shown in cells 0-17, 48-51, and 62-63. He is positioned on the right side of his frame and is facing towards the left. The narrator in green is shown in cells 18-22, positioned in the center of his frame and facing towards the right. This indicates they are likely sitting across from each other, meaning the narrator in red is facing the narrator in green.. (17/99999)
+[SCRATCHPAD] Added: @403.5s (Conf: 0.8) - Narrator in red (maroon hoodie) is seen in cells 0-4, positioned on the right and facing left. Narrator in green (olive hoodie) is seen in cells 10-56, mostly facing forward or left. This helps establish their individual positions but doesn't show them together yet.. (18/99999)
+[SCRATCHPAD] Replacing @403.5s with better @404.0s
+[SCRATCHPAD] Skipped @404.0s (duplicate of @404.0s)
+[SCRATCHPAD] Skipped @404.0s (duplicate of @404.0s)
+[SCRATCHPAD] Skipped @403.5s (duplicate of @404.0s)
+[SCRATCHPAD] Skipped @403.5s (duplicate of @404.0s)
+[SCRATCHPAD] Skipped @403.5s (duplicate of @404.0s)
+[SCRATCHPAD] Added: @369.7s (Conf: 0.8) - Narrator in red (red hoodie) is on the right side of the screen in cells 0-26 and 54-57, looking to his left. This helps the search task because it indicates his position and orientation.. (19/99999)
+[SCRATCHPAD] Added: @382.4s (Conf: 0.8) - Narrator in green (olive green jacket) is centered in cells 27-31, looking to his right. This helps the search task because it indicates his position and orientation.. (20/99999)
+[SCRATCHPAD] Skipped @369.7s (duplicate of @369.7s)
+[SCRATCHPAD] Added: @366.8s (Conf: 1) - At 366.8s, only the narrator in green (Marques Brownlee) is visible. He is wearing a green hoodie and facing towards his right (the viewer's left). There is no narrator in red visible in this frame.. (21/99999)
+[SCRATCHPAD] Skipped @366.8s (duplicate of @366.8s)
+[SCRATCHPAD] Skipped @366.8s (duplicate of @366.8s)
+[SCRATCHPAD] Skipped @370.0s (duplicate of @369.7s)
+[DFS] Evidence: 21 | Frontier: explored: 14, open: 50
+[IMG] Saved: results\run_20260312_012421_images\0138_DFS_round2_uncertainty_grid.jpg
+[IMG] Saved: results\run_20260312_012421_images\0139_scratchpad_21items.jpg
+[SCRATCHPAD] Reasoning saved: results\run_20260312_012421_images\0139_scratchpad_21items_reasoning.json
+[MASTER] Uncertainty raw: {"reasoning": "The evidence collected from multiple timestamps (e.g., [G], [J], [K], [O], [S], [T]) consistently shows the narrator in the red hoodie (Andrew) and the narrator in the green hoodie (Marques) positioned on opposite sides of the studio setup. In their respective solo shots and composite views, the narrator in green is facing towards the right of the frame, while the narrator in red is facing towards the left of the frame. This indicates they are sitting across from one another, meaning the narrator in red is facing towards the narrator in green.", "action": "FINAL_DECISION"}
+[MASTER] Uncertainty: FINAL_DECISION — The evidence collected from multiple timestamps (e.g., [G], [J], [K], [O], [S], [T]) consistently shows the narrator in the red hoodie (Andrew) and the narrator in the green hoodie (Marques) positioned on opposite sides of the studio setup. In their respective solo shots and composite views, the narrator in green is facing towards the right of the frame, while the narrator in red is facing towards the left of the frame. This indicates they are sitting across from one another, meaning the narrator in red is facing towards the narrator in green.
+[DFS] Finished: 112/512 calls, 2 rounds
+
+============================================================
+[MASTER] Phase 3: Final Decision (mode=DFS)
+[IMG] Saved: results\run_20260312_012421_images\0140_scratchpad_21items.jpg
+[SCRATCHPAD] Reasoning saved: results\run_20260312_012421_images\0140_scratchpad_21items_reasoning.json
+
+FINAL SCRATCHPAD (21 items):
+- @0.0s: At 0.0s, there are two people in a podcast setting. One is wearing a red hoodie ... (Conf: 0.8)
+- @3.5s: At 3.5s, only the narrator in a green hoodie is visible. He is facing forward an... (Conf: 0.9)
+- @91.1s: In frames 1 and 2, a narrator in a green (teal) shirt is on the left, facing rig... (Conf: 0.9)
+- @94.0s: The narrator in green (Marques Brownlee) is shown in the first frame at 94.0s. H... (Conf: 0.8)
+- @113.0s: In the leftmost sub-frame, the narrator in red is facing left. This helps determ... (Conf: 0.9)
+- @161.6s: The person in the frame is wearing a green hoodie. This might be the 'narrator i... (Conf: 0.8)
+- @211.5s: At 211.5s, the narrator in green (Marques) is seen in a separate shot facing tow... (Conf: 0.9)
+- @229.3s: At 229.3s, the narrator in green (Marques Brownlee) is visible, facing forward a... (Conf: 0.9)
+- @288.3s: At 288.3s, the narrator in red (Andrew) is visible in the second panel from the ... (Conf: 0.8)
+- @311.0s: The narrator in the red hoodie is on the right side of the frame, and the narrat... (Conf: 0.9)
+- @339.3s: The narrator in red is on the right side of the frame and is facing towards the ... (Conf: 0.9)
+- @357.1s: At 357.1s, the narrator in green (Marques Brownlee) is shown in a sequence of fr... (Conf: 1)
+- @366.8s: At 366.8s, only the narrator in green (Marques Brownlee) is visible. He is weari... (Conf: 1)
+- @369.7s: Narrator in red (red hoodie) is on the right side of the screen in cells 0-26 an... (Conf: 0.8)
+- @373.5s: The narrator in red is shown in cells 0-17, 48-51, and 62-63. He is positioned o... (Conf: 0.9)
+- @382.4s: Narrator in green (olive green jacket) is centered in cells 27-31, looking to hi... (Conf: 0.8)
+- @404.0s: In the first panel of the composite, a narrator in a red hoodie is on the right ... (Conf: 0.9)
+- @424.5s: The narrator in green (green hoodie) is seen in cells 0-24, facing towards the r... (Conf: 0.8)
+- @454.2s: At 454.2s, the narrator in red is facing towards the right side of the screen, w... (Conf: 1)
+- @490.6s: The narrator in red (Andrew) is facing towards the left of the frame in the firs... (Conf: 0.9)
+- @491.8s: The image shows Marques Brownlee in a green hoodie. This identifies the 'narrato... (Conf: 0.7)
+COVERAGE: 0.0%
+[ANSWER] The narrator in red is facing towards the narrator in green.
+[REASONING] Based on the provided evidence, the narrator in red (Andrew) and the narrator in green (Marques Brownlee) are positioned in a podcast studio facing each other. Multiple timestamps (G, J, K, O, R, T) show that the narrator in red is typically positioned on the right side of the frame and faces toward the left, while the narrator in green is positioned on the left side and faces toward the right. Specifically, evidence at 373.5s (O) and 490.6s (T) confirms that they are sitting across from one another, meaning the narrator in red is facing directly toward the narrator in green.
+
+============================================================
+FINAL RESULT
+============================================================
+  Question: Which direction is the narrator in red facing\nrelative to the narrator in green?
+
+  Answer: The narrator in red is facing towards the narrator in green.
+  Reasoning: Based on the provided evidence, the narrator in red (Andrew) and the narrator in green (Marques Brownlee) are positioned in a podcast studio facing each other. Multiple timestamps (G, J, K, O, R, T) show that the narrator in red is typically positioned on the right side of the frame and faces toward the left, while the narrator in green is positioned on the left side and faces toward the right. Specifically, evidence at 373.5s (O) and 490.6s (T) confirms that they are sitting across from one another, meaning the narrator in red is facing directly toward the narrator in green.
+
+============================================================
+METRICS SUMMARY
+============================================================
+  vlm_calls                : 113
+  input_tokens             : 235532
+  output_tokens            : 4771
+  total_tokens             : 240303
+  master_tokens            : 21094
+  worker_tokens            : 219209
+  estimated_tflops         : 1441.82
+  frames_decoded           : 3485
+  total_frames             : 70357
+  sufficiency_checks       : 2
+  explore_rounds           : 2
+  evidence_count           : 21
+  wall_time_s              : 995.42
+  coverage_pct             : 0.0
+  mode_used                : DFS
+============================================================
+
+Result saved to: results\result_20260312_012421.json
+Full log saved to: results\run_20260312_012421.log
+Replay video saved to: results\run_20260312_012421_images\replay.mp4

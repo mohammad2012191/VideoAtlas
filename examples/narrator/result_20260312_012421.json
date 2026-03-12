@@ -1,0 +1,24 @@
+{
+  "question": "Which direction is the narrator in red facing\\nrelative to the narrator in green?",
+  "candidates": [],
+  "predicted_choice": -1,
+  "predicted_answer": "The narrator in red is facing towards the narrator in green.",
+  "reasoning": "Based on the provided evidence, the narrator in red (Andrew) and the narrator in green (Marques Brownlee) are positioned in a podcast studio facing each other. Multiple timestamps (G, J, K, O, R, T) show that the narrator in red is typically positioned on the right side of the frame and faces toward the left, while the narrator in green is positioned on the left side and faces toward the right. Specifically, evidence at 373.5s (O) and 490.6s (T) confirms that they are sitting across from one another, meaning the narrator in red is facing directly toward the narrator in green.",
+  "metrics": {
+    "vlm_calls": 113,
+    "input_tokens": 235532,
+    "output_tokens": 4771,
+    "total_tokens": 240303,
+    "master_tokens": 21094,
+    "worker_tokens": 219209,
+    "estimated_tflops": 1441.82,
+    "frames_decoded": 3485,
+    "total_frames": 70357,
+    "sufficiency_checks": 2,
+    "explore_rounds": 2,
+    "evidence_count": 21,
+    "wall_time_s": 995.42,
+    "coverage_pct": 0.0,
+    "mode_used": "DFS"
+  }
+}

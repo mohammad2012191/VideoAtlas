@@ -1,0 +1,177 @@
+[
+  {
+    "letter": "A",
+    "time": 849.6,
+    "confidence": 0.8,
+    "description": "The video segment from 849.6s to 879.6s describes the daily challenges Einstein posed to Bohr and how Bohr would eventually find an answer. This establishes the context of their debate but doesn't yet provide the final resolution or mention the specific experiments in the options. I need to look further ahead.",
+    "subtitle": "NARRATOR: ...he challenged the most vocal supporter of these ideas: the great Danish physicist Niels Bohr."
+  },
+  {
+    "letter": "B",
+    "time": 853.4,
+    "confidence": 0.9,
+    "description": "The narrator mentions Einstein challenged Bohr, the vocal supporter of quantum ideas. David Kaiser describes their daily exchanges at breakfast and meetings. This confirms the 'Einstein vs Bohr' debate is the topic.",
+    "subtitle": "NARRATOR: ...he challenged the most vocal supporter of these ideas: the great Danish physicist Niels Bohr. | KAISER: Einstein would show up to breakfast at the hotel, and Niels Bohr would be there, and Einstein would present his latest challenge."
+  },
+  {
+    "letter": "C",
+    "time": 875,
+    "confidence": 0.7,
+    "description": "The video describes the Einstein-Bohr debate, noting that Bohr successfully answered Einstein's daily challenges and that Einstein found no flaws in the equations. This helps establish the context of the debate but doesn't yet mention the specific experiments in the options.",
+    "subtitle": "and somehow, every night by suppertime, Bohr would have an answer. One of the observers said | that Einstein was like a jack-in-the-box; every day, he'd pop up with a new challenge. And Bohr would flip this way and that,"
+  },
+  {
+    "letter": "D",
+    "time": 879.6,
+    "confidence": 0.7,
+    "description": "The search task is to find how the debate turned out. I need to look for mentions of Bell's experiment or other specific experiments mentioned in the options.",
+    "subtitle": "that Einstein was like a jack-in-the-box; every day, he'd pop up with a new challenge. And Bohr would flip this way and that, | and in the end, by supper, have crushed that one, and it would start all over again."
+  },
+  {
+    "letter": "E",
+    "time": 1499.4,
+    "confidence": 0.8,
+    "description": "The video discusses John Bell's work and how he revisited the Einstein-Bohr debate, suggesting Einstein's questions were still relevant. This sets the stage for a later resolution.",
+    "subtitle": "NARRATOR: Bell insisted that Einstein's questions about quantum mechanics had not been addressed."
+  },
+  {
+    "letter": "F",
+    "time": 1501.7,
+    "confidence": 0.8,
+    "description": "Between 1501.7s and 1506.9s, Kaiser mentions Bell's insistence that Bohr had not solved all the problems, highlighting the ongoing debate.",
+    "subtitle": "NARRATOR: Bell insisted that Einstein's questions about quantum mechanics had not been addressed. | KAISER: He got into shouting matches with his professors. \"Don't tell us that Bohr solved all the problems."
+  },
+  {
+    "letter": "G",
+    "time": 1506.4,
+    "confidence": 0.7,
+    "description": "At 1506.4s, John Bell states that while quantum mechanics is successful, there are 'great doubts' at its foundation, indicating he is looking for a way to test the debate.",
+    "subtitle": "KAISER: He got into shouting matches with his professors. \"Don't tell us that Bohr solved all the problems. | This really deserves further thought.\" BELL: Quantum mechanics has been fantastically successful."
+  },
+  {
+    "letter": "H",
+    "time": 1513.5,
+    "confidence": 0.7,
+    "description": "The video mentions Bell's interest in the foundations of quantum mechanics despite its success. I need to find the specific experiment that settled the Einstein-Bohr debate.",
+    "subtitle": "This really deserves further thought.\" BELL: Quantum mechanics has been fantastically successful. | So it is a very intriguing situation that at the, at the foundation"
+  },
+  {
+    "letter": "I",
+    "time": 1529.4,
+    "confidence": 0.9,
+    "description": "The video shows John Bell and discusses his work, which eventually led to experiments that tested the Einstein-Bohr debate. I need to find the specific outcome mentioned in the video.",
+    "subtitle": "CARROLL: It's a very strange thing that ever since the 1930s, the idea of sitting and thinking hard"
+  },
+  {
+    "letter": "J",
+    "time": 1749.3,
+    "confidence": 0.8,
+    "description": "The man speaking before this (around 1749s) describes measuring a 'stronger correlation characteristic of quantum mechanics,' which refers to an experimental test of Bell's inequality.",
+    "subtitle": "they must be spookily entangled. | We saw the stronger correlation characteristic of quantum mechanics. We measured it, and that is what we got."
+  },
+  {
+    "letter": "K",
+    "time": 1755.9,
+    "confidence": 1,
+    "description": "At 1755.9s, the narrator states, 'The outcome was exactly what Bohr's quantum mechanics predicted.' This confirms Bohr was correct in the debate against Einstein.",
+    "subtitle": "We saw the stronger correlation characteristic of quantum mechanics. We measured it, and that is what we got. | â™ª â™ª NARRATOR: The outcome was exactly what Bohr's quantum mechanics predicted."
+  },
+  {
+    "letter": "L",
+    "time": 1768,
+    "confidence": 0.9,
+    "description": "At 1768.0s, the narrator asks, 'Could it be that the great Albert Einstein was wrong?' following the confirmation of Bohr's predictions by the experiment (Bell test). This reinforces that the experiment favored Bohr over Einstein.",
+    "subtitle": "The experiment appeared to show that the spooky connections of quantum entanglement | did exist in the natural world. Could it be that the great Albert Einstein was wrong?"
+  },
+  {
+    "letter": "M",
+    "time": 1800,
+    "confidence": 0.7,
+    "description": "At 1800s, David Kaiser is discussing the Fundamental Fysiks Group and their interest in quantum entanglement and Eastern mysticism. This group was instrumental in bringing Bell's Theorem to the forefront of experimental physics to test the Einstein-Bohr debate. This helps identify the context of the search for the debate's resolution.",
+    "subtitle": "CLAUSER: Ronald Reagan's definition of a hippie was someone who dresses like Tarzan, | has hair like Jane, and smells like Cheeta. (laughs) â™ª â™ª"
+  },
+  {
+    "letter": "N",
+    "time": 2498.9,
+    "confidence": 0.8,
+    "description": "The video shows a team at a high-altitude observatory setting up a cosmic Bell test using quasars. This is the setup for the experiment that will settle the Einstein-Bohr debate. I need to find the result.",
+    "subtitle": "is about a third of a mile from each of the detectors. The team must send perfectly timed pairs of photons"
+  },
+  {
+    "letter": "O",
+    "time": 2510.2,
+    "confidence": 0.8,
+    "description": "The video describes a 'cosmic Bell test' using light from distant quasars to ensure randomness in the experiment. This helps the search task because it's a setup for an experiment designed to settle the Einstein-Bohr debate.",
+    "subtitle": "through the air to each side. At the same time, the telescopes will collect light | from two extremely far-off, extremely bright galaxies called quasars."
+  },
+  {
+    "letter": "P",
+    "time": 2528.9,
+    "confidence": 0.8,
+    "description": "The video describes a cosmic Bell test using light from quasars to control filters. This experiment aims to settle the Einstein-Bohr debate. I need to find the conclusion.",
+    "subtitle": "Random variations in this light will control which filters are used to measure the photon pairs. | And since the quasars are so far away-- the light has been traveling for billions of years"
+  },
+  {
+    "letter": "Q",
+    "time": 2768.8,
+    "confidence": 1,
+    "description": "Anton Zeilinger discusses a 'fantastic' experiment where the 'big cosmos' controls a quantum experiment (Cosmic Bell Test). This experiment, performed by his team at a high-altitude observatory (visualized in cells 24-46), leaves 'hardly any room left for a kind of alternative, Einstein-like explanation,' confirming Bohr was right. This points to option A.",
+    "subtitle": "ZEILINGER: The experiment we did is just fantastic. The big cosmos comes down | to control a small quantum experiment. That, that in itself is a, is, is beautiful."
+  },
+  {
+    "letter": "R",
+    "time": 2770,
+    "confidence": 0.8,
+    "description": "The visuals show a high-altitude observatory and stars, which Zeilinger mentions were used to 'control a small quantum experiment'. This identifies the experiment as the one performed by the team at the high-altitude observatory.",
+    "subtitle": "ZEILINGER: The experiment we did is just fantastic. The big cosmos comes down | to control a small quantum experiment. That, that in itself is a, is, is beautiful."
+  },
+  {
+    "letter": "S",
+    "time": 2791,
+    "confidence": 0.9,
+    "description": "David Kaiser states at 2791s that there is 'hardly any room left for a kind of alternative, Einstein-like explanation' following their experiment. This supports the idea that Bohr's view was further confirmed.",
+    "subtitle": "I mean... ...when I realize what our team was able to do, in this intellectual journey that stretches back | to the early years of the 20th century. There's, there's hardly any room left"
+  },
+  {
+    "letter": "T",
+    "time": 2796,
+    "confidence": 0.8,
+    "description": "David Kaiser mentions 'our team' and that there is 'hardly any room left for a kind of alternative, Einstein-like explanation', suggesting Bohr was confirmed right. The visuals show a high-altitude observatory environment. This points towards option A.",
+    "subtitle": "to the early years of the 20th century. There's, there's hardly any room left | for a kind of alternative, Einstein-like explanation. We haven't ruled it out,"
+  },
+  {
+    "letter": "U",
+    "time": 2798.8,
+    "confidence": 1,
+    "description": "The video shows Anton Zeilinger discussing an experiment conducted by his team at a high-altitude observatory (visualized with mountain-top telescopes and green lasers). He concludes that the results leave 'hardly any room left for a kind of alternative, Einstein-like explanation,' confirming that Bohr's quantum mechanical view was correct. This directly supports Option A.",
+    "subtitle": "for a kind of alternative, Einstein-like explanation. We haven't ruled it out,"
+  },
+  {
+    "letter": "V",
+    "time": 2800,
+    "confidence": 0.9,
+    "description": "The speaker (man in brown jacket) states that their results have made Einstein-like explanations 'even more implausible' and that entanglement (Bohr's view) is the explanation. This happens around 2800-2810s. This helps the search task because it confirms Bohr was right according to the video.",
+    "subtitle": "for a kind of alternative, Einstein-like explanation. We haven't ruled it out,"
+  },
+  {
+    "letter": "W",
+    "time": 2802.1,
+    "confidence": 1,
+    "description": "The speaker discusses an experiment at a high-altitude observatory (Cosmic Bell Test in the Canary Islands) and states that they have made Einstein-like explanations (hidden variables) extremely implausible, confirming entanglement. This helps the search task because it directly addresses the outcome of the Einstein-Bohr debate as presented in the video.",
+    "subtitle": "for a kind of alternative, Einstein-like explanation. We haven't ruled it out, | but we've shoved it into such a tiny corner of the cosmos as to make it even more implausible"
+  },
+  {
+    "letter": "X",
+    "time": 2808.6,
+    "confidence": 1,
+    "description": "The video features David Kaiser discussing the results of an experiment that 'shoved [the Einstein-like alternative explanation] into such a tiny corner of the cosmos as to make it even more implausible for anything other than entanglement to explain our results.' This refers to the Cosmic Bell Test conducted at high-altitude observatories, which further confirmed Bohr's view of entanglement. This helps the search task because it directly identifies the outcome of the Einstein-Bohr debate as presented in the video.",
+    "subtitle": "but we've shoved it into such a tiny corner of the cosmos as to make it even more implausible | for anything other than entanglement to explain our results. â™ª â™ª"
+  },
+  {
+    "letter": "Y",
+    "time": 2815.7,
+    "confidence": 1,
+    "description": "At 2815.7s-2824.1s, the narrator states that entanglement is a part of the natural world, meaning an action in one place has an instant effect elsewhere, which confirms Bohr's position in the debate. This points to Option A as the experiment discussed (the high-altitude observatory/Cosmic Bell test) further confirmed Bohr was right.",
+    "subtitle": "for anything other than entanglement to explain our results. â™ª â™ª | NARRATOR: Accepting that entanglement is a part of the natural world around us has profound implications."
+  }
+]

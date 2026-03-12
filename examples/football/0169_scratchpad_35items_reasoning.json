@@ -1,0 +1,247 @@
+[
+  {
+    "letter": "A",
+    "time": 26,
+    "confidence": 1,
+    "description": "At 0:26, the referee gives a yellow card to Enzo Fernandez. This is the 1st yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "B",
+    "time": 84,
+    "confidence": 1,
+    "description": "At 1:24, the referee gives a yellow card to Adrien Rabiot. This is the 2nd yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "C",
+    "time": 115.46,
+    "confidence": 0.8,
+    "description": "Scoreboard shows ARG 3 - 2 FRA at 115:46. This is the 2022 World Cup Final. I will look for yellow card events in this match.",
+    "subtitle": ""
+  },
+  {
+    "letter": "D",
+    "time": 125.8,
+    "confidence": 0.7,
+    "description": "The video shows a match between Argentina (ARG) and France (FRA) with a score of 0-0 at around 5:47. This is likely the 2022 FIFA World Cup Final. Knowing the specific match will help confirm the total number of yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "E",
+    "time": 144,
+    "confidence": 1,
+    "description": "At 2:24, the referee gives a yellow card to Marcus Thuram for simulation. This is the 3rd yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "F",
+    "time": 198,
+    "confidence": 1,
+    "description": "At 3:18, the referee gives a yellow card to Olivier Giroud on the bench. This is the 4th yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "G",
+    "time": 258.1,
+    "confidence": 1,
+    "description": "At 258.1s (Cell 0), the referee is seen holding up a yellow card. This is one instance of a yellow card being given in the video.",
+    "subtitle": ""
+  },
+  {
+    "letter": "H",
+    "time": 288,
+    "confidence": 1,
+    "description": "At 4:48, the referee gives a yellow card to Marcos Acuna. This is the 5th yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "I",
+    "time": 371.1,
+    "confidence": 1,
+    "description": "At 371.1s to 375.5s, the referee is seen holding up a yellow card to an Argentina player (looks like Enzo Fernandez was fouled, but someone else might be getting the card, or it's for the foul on him). Actually, it looks like he's showing it to a player. This is a definitive instance of a yellow card being given.",
+    "subtitle": ""
+  },
+  {
+    "letter": "J",
+    "time": 375.5,
+    "confidence": 1,
+    "description": "At 375.5s, the referee is seen holding up a yellow card to Argentina player Enzo Fernandez. This is a direct visual instance of a yellow card being given.",
+    "subtitle": ""
+  },
+  {
+    "letter": "K",
+    "time": 381,
+    "confidence": 1,
+    "description": "At 6:21, the referee gives a yellow card to Leandro Paredes. This is the 6th yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "L",
+    "time": 417.3,
+    "confidence": 1,
+    "description": "At approximately 417.3s to 419.1s (Cells 50-55), the referee is seen holding up a yellow card. This is one instance of a yellow card being given in the match.",
+    "subtitle": ""
+  },
+  {
+    "letter": "M",
+    "time": 418.6,
+    "confidence": 1,
+    "description": "At 418.6s to 420.1s (cells 56-59), the referee is clearly seen holding up a yellow card to a player. This is one yellow card instance.",
+    "subtitle": ""
+  },
+  {
+    "letter": "N",
+    "time": 421,
+    "confidence": 1,
+    "description": "The referee holds up a yellow card at 421.0s - 422.4s (Cells 61-63). This is one yellow card given in the match.",
+    "subtitle": ""
+  },
+  {
+    "letter": "O",
+    "time": 423.9,
+    "confidence": 0.9,
+    "description": "A graphic shows Adrien Rabiot received a yellow card at around 424s. This indicates a yellow card was given, although the referee is not shown holding it in this specific segment.",
+    "subtitle": ""
+  },
+  {
+    "letter": "P",
+    "time": 426,
+    "confidence": 1,
+    "description": "At 7:06, the referee gives a yellow card to Gonzalo Montiel. This is the 7th yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "Q",
+    "time": 471,
+    "confidence": 1,
+    "description": "At 7:51, the referee gives a yellow card to Emiliano Martinez during the penalty shootout. This is the 8th yellow card observed.",
+    "subtitle": ""
+  },
+  {
+    "letter": "R",
+    "time": 766,
+    "confidence": 1,
+    "description": "At 766.0s (Cell 41), the referee is seen reaching for and then holding a yellow card. From 768.9s to 771.5s (Cells 49-55), he clearly shows the yellow card to Olivier Giroud on the French bench. This is one yellow card instance.",
+    "subtitle": ""
+  },
+  {
+    "letter": "S",
+    "time": 768.6,
+    "confidence": 1,
+    "description": "At approximately 768.6s to 773.0s, the referee is seen holding up a yellow card and showing it to Olivier Giroud on the French bench. This is one instance of a yellow card being given.",
+    "subtitle": ""
+  },
+  {
+    "letter": "T",
+    "time": 770,
+    "confidence": 1,
+    "description": "The referee holds up a yellow card to Olivier Giroud at approximately 770.0s. This is a direct instance of a yellow card being given.",
+    "subtitle": ""
+  },
+  {
+    "letter": "U",
+    "time": 771.9,
+    "confidence": 1,
+    "description": "At approximately 771.9s (Cell 57), the referee shows a yellow card to Olivier Giroud, who appears to be on the bench. This is one instance of a yellow card.",
+    "subtitle": ""
+  },
+  {
+    "letter": "V",
+    "time": 803.8,
+    "confidence": 1,
+    "description": "The referee is seen holding up a yellow card between 803.8s and 805.6s (Cells 16-20). This is one instance of a yellow card being given.",
+    "subtitle": ""
+  },
+  {
+    "letter": "W",
+    "time": 1034.5,
+    "confidence": 1,
+    "description": "At 1034.5s, the referee is shown holding up a yellow card. A graphic at 1039.2s confirms this was for Leandro Paredes. This is the 1st yellow card instance found.",
+    "subtitle": ""
+  },
+  {
+    "letter": "X",
+    "time": 1037.3,
+    "confidence": 1,
+    "description": "At 113:53 (cells 16-19), the referee shows a yellow card to Leandro Paredes (Argentina, #5). This is one yellow card given in the match.",
+    "subtitle": ""
+  },
+  {
+    "letter": "Y",
+    "time": 1052.3,
+    "confidence": 1,
+    "description": "At timestamp 1052.3s (Cell 56) to 1054.2s (Cell 59), the referee is seen holding up another yellow card, which is shown to be for Gonzalo Montiel (Cell 62). This is the second yellow card in this segment.",
+    "subtitle": ""
+  },
+  {
+    "letter": "Z",
+    "time": 1056.1,
+    "confidence": 0.9,
+    "description": "A graphic appears on screen indicating Gonzalo Montiel has received a yellow card. This confirms a yellow card was given at this point in the match.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AA",
+    "time": 2755,
+    "confidence": 0.8,
+    "description": "At 45:55, a yellow card is shown to Enzo Fernández (Argentina). This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AB",
+    "time": 3151,
+    "confidence": 0.9,
+    "description": "At 45:00 + 6:31 (approx 3151s if 45m=2700s), the referee shows a yellow card to Enzo Fernandez (Argentina). This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AC",
+    "time": 3177,
+    "confidence": 0.9,
+    "description": "At 45:00 + 6:57 (approx 3177s), the referee shows a yellow card to Olivier Giroud (France) who is on the bench. This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AD",
+    "time": 3298,
+    "confidence": 0.8,
+    "description": "At 54:58, a yellow card is shown to Adrien Rabiot (France). This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AE",
+    "time": 5205,
+    "confidence": 0.8,
+    "description": "At 1:26:45 (86:45 on clock), Marcus Thuram (France) is shown a yellow card for simulation. This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AF",
+    "time": 5446,
+    "confidence": 0.8,
+    "description": "At 1:30:46 (90+8 on clock), Olivier Giroud (France) is shown a yellow card while on the bench. This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AG",
+    "time": 8038,
+    "confidence": 0.8,
+    "description": "At 2:13:58 (113:58 on clock), Leandro Paredes (Argentina) is shown a yellow card. This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AH",
+    "time": 8175,
+    "confidence": 0.8,
+    "description": "At 2:16:15 (116:15 on clock), Gonzalo Montiel (Argentina) is shown a yellow card. This helps count the total yellow cards.",
+    "subtitle": ""
+  },
+  {
+    "letter": "AI",
+    "time": 8660,
+    "confidence": 0.8,
+    "description": "At 2:24:20 (after 120+3 on clock), Emiliano Martínez (Argentina) is shown a yellow card during the penalty shootout. This helps count the total yellow cards.",
+    "subtitle": ""
+  }
+]

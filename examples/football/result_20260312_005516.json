@@ -1,0 +1,24 @@
+{
+  "question": "How many yellow cards were given in this match?",
+  "candidates": [],
+  "predicted_choice": -1,
+  "predicted_answer": "There were 8 yellow cards given in this match. The recipients were Enzo Fernandez, Adrien Rabiot, Marcus Thuram, Olivier Giroud, Marcos Acuna, Leandro Paredes, Gonzalo Montiel, and Emiliano Martinez.",
+  "reasoning": "Based on the visual evidence provided in the video segments, there were a total of 8 yellow cards given during the match. The evidence sequentially identifies and counts these instances: \n\n1.  **Enzo Fernandez (Argentina):** Observed at 26.0s [A], 375.5s [J], and 2755.0s [AA].\n2.  **Adrien Rabiot (France):** Observed at 84.0s [B], 423.9s [O], and 3298.0s [AD].\n3.  **Marcus Thuram (France):** Observed at 144.0s [E] and 5205.0s [AE] for simulation.\n4.  **Olivier Giroud (France):** Observed on the bench at 198.0s [F], 770.0s [T], and 5446.0s [AF].\n5.  **Marcos Acuna (Argentina):** Observed at 288.0s [H].\n6.  **Leandro Paredes (Argentina):** Observed at 381.0s [K], 1034.5s [W], and 8038.0s [AG].\n7.  **Gonzalo Montiel (Argentina):** Observed at 426.0s [P], 1056.1s [Z], and 8175.0s [AH].\n8.  **Emiliano Martinez (Argentina):** Observed during the penalty shootout at 471.0s [Q] and 8660.0s [AI].",
+  "metrics": {
+    "vlm_calls": 128,
+    "input_tokens": 295877,
+    "output_tokens": 6902,
+    "total_tokens": 302779,
+    "master_tokens": 39181,
+    "worker_tokens": 263598,
+    "estimated_tflops": 1816.67,
+    "frames_decoded": 5073,
+    "total_frames": 90117,
+    "sufficiency_checks": 4,
+    "explore_rounds": 5,
+    "evidence_count": 35,
+    "wall_time_s": 993.02,
+    "coverage_pct": 32.81,
+    "mode_used": "DFS"
+  }
+}

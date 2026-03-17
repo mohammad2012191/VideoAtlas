@@ -129,9 +129,11 @@ def process_question(master, worker_agents, video_path, sub_path, query, candida
     # Sufficiency check
     if global_scratchpad.evidence:
         metrics.sufficiency_checks += 1
-        if master.check_sufficiency(query, global_scratchpad) == "yes":
+        evidence_img, _ = global_scratchpad.generate_evidence_grid(cell_size=256)
+        if master.check_sufficiency(query, global_scratchpad, evidence_img=evidence_img) == "yes":
             log("[MASTER] Sufficient from global grid — skipping workers.")
-            result   = master.final_decide(query, global_scratchpad, candidates=candidates)
+            result   = master.final_decide(query, global_scratchpad, candidates=candidates,
+                                           evidence_img=evidence_img)
             coverage = global_neg_mem.coverage_pct()
             metrics.evidence_count = len(global_scratchpad.evidence)
             return result, "DIRECT", 0, coverage
@@ -273,12 +275,11 @@ def process_question(master, worker_agents, video_path, sub_path, query, candida
 
             if new_evidence and batch_num % SUFFICIENCY_EVERY_K == 0:
                 metrics.sufficiency_checks += 1
-                progress       = build_progress_text(nav_master, explored_ranges, global_scratchpad)
-                masked_grid_ua = blackout_dead_cells(grid_img, cell_info)
-                save_debug_image(masked_grid_ua, f"BFS_batch{batch_num}_uncertainty_grid")
+                progress = build_progress_text(nav_master, explored_ranges, global_scratchpad)
+                save_debug_image(masked_grid, f"BFS_batch{batch_num}_uncertainty_grid")
                 ua = master.uncertainty_analysis(
                     query, global_scratchpad, candidates or [],
-                    masked_grid_ua, cell_info, progress, num_workers
+                    masked_grid, cell_info, progress, num_workers
                 )
                 log(f"[MASTER] Uncertainty: {ua['action']} — {ua['reasoning']}")
                 if ua['action'] == "FINAL_DECISION":
@@ -384,12 +385,11 @@ def process_question(master, worker_agents, video_path, sub_path, query, candida
 
             if new_evidence and round_idx % SUFFICIENCY_EVERY_K == 0:
                 metrics.sufficiency_checks += 1
-                progress       = build_progress_text(nav_master, explored_ranges, global_scratchpad)
-                masked_grid_ua = blackout_dead_cells(grid_img, cell_info)
-                save_debug_image(masked_grid_ua, f"DFS_round{round_idx}_uncertainty_grid")
+                progress = build_progress_text(nav_master, explored_ranges, global_scratchpad)
+                save_debug_image(masked_grid, f"DFS_round{round_idx}_uncertainty_grid")
                 ua = master.uncertainty_analysis(
                     query, global_scratchpad, candidates or [],
-                    masked_grid_ua, cell_info, progress, num_workers
+                    masked_grid, cell_info, progress, num_workers
                 )
                 log(f"[MASTER] Uncertainty: {ua['action']} — {ua['reasoning']}")
                 if ua['action'] == "FINAL_DECISION":

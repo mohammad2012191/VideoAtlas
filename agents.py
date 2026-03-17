@@ -225,8 +225,11 @@ class MasterAgent(_BaseAgent):
     def __init__(self, gpu_id: int = 0):
         super().__init__(MASTER_MODEL_PATH, gpu_id, is_master=True)
 
-    def check_sufficiency(self, query: str, scratchpad) -> str:
-        evidence_img, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
+    def check_sufficiency(self, query: str, scratchpad, evidence_img=None) -> str:
+        if evidence_img is not None:
+            _, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
+        else:
+            evidence_img, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
         evidence_text = "\n".join(cell_descs)
 
         prompt = f"""**EVIDENCE SUFFICIENCY CHECK**
@@ -247,8 +250,11 @@ Has the search task been completed? Reply with ONLY "yes" or "no"."""
         output = self._generate(messages, tools=None, max_tokens=2048, thinking=True)
         return "yes" if "yes" in output.lower() else "no"
 
-    def final_decide(self, query: str, scratchpad, candidates=None) -> dict:
-        evidence_img, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
+    def final_decide(self, query: str, scratchpad, candidates=None, evidence_img=None) -> dict:
+        if evidence_img is not None:
+            _, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
+        else:
+            evidence_img, cell_descs = scratchpad.generate_evidence_grid(cell_size=256)
         evidence_text = "\n".join(cell_descs)
         last_letter   = _idx_to_letter(len(cell_descs) - 1)
 

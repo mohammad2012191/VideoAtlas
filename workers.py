@@ -186,6 +186,10 @@ def worker_explore(agent, nav, query, cell, budget, worker_id, max_depth=None):
     tag = f"[W{worker_id}|C{cell.cell_id}]"
     log(f"  {tag} Start [{cell.start:.1f}-{cell.end:.1f}s] budget={budget}")
 
+    # Multi-turn conversation accumulation for Gemini cache reuse
+    conversation  = []
+    prev_view_key = None
+
     for step in range(budget):
         grid_img, cell_info, _, _ = nav.generate_grid_view(center, span)
         save_debug_image(grid_img, f"W{worker_id}_C{cell.cell_id}_step{step}")
@@ -216,16 +220,23 @@ ADD_TO_SCRATCHPAD rules:
 
 Select the best action."""
 
-        messages = [{"role": "user", "content": [
-            {"type": "image", "image": grid_img},
-            {"type": "text",  "text":  user_prompt}
-        ]}]
+        # Check if view changed — only re-send image when it did
+        view_key = (round(center, 4), round(span, 4))
+        content_parts = []
+        if view_key != prev_view_key:
+            # View changed — include new grid image, reset conversation
+            content_parts.append({"type": "image", "image": grid_img})
+            prev_view_key = view_key
+            conversation = []
+        content_parts.append({"type": "text", "text": user_prompt})
+        conversation.append({"role": "user", "content": content_parts})
 
         try:
-            output    = agent._generate(messages, tools=step_tools, max_tokens=2048)
+            output    = agent._generate(conversation, tools=step_tools, max_tokens=2048)
             log(f"  {tag} Step {step} RAW: {output}...")
             decisions = agent._parse_tool_calls(output)
             log(f"  {tag} Step {step} PARSED: {[d.get('action') for d in decisions]}")
+            conversation.append({"role": "assistant", "content": output})
         except Exception as e:
             log(f"  {tag} Step {step} PARSE ERROR: {e}")
             fix_msgs = [{"role": "user", "content":
@@ -233,6 +244,7 @@ Select the best action."""
             try:
                 fixed    = agent._generate(fix_msgs, tools=None, max_tokens=2048)
                 decisions = agent._parse_tool_calls(fixed)
+                conversation.append({"role": "assistant", "content": fixed})
             except Exception as e2:
                 log(f"  {tag} Repair failed: {e2}")
                 decisions = [{"action": "FINISHED"}]
@@ -425,6 +437,10 @@ def worker_explore_bfs(agent, nav, query, bfs_item, worker_id):
     nav_stack       = NavigationStack()
     prev_summary    = ""
 
+    # Multi-turn conversation accumulation for Gemini cache reuse
+    conversation  = []
+    prev_view_key = None
+
     for step in range(BFS_BUDGET):
         grid_img, cell_info, _, _ = nav.generate_grid_view(center, span)
         save_debug_image(grid_img, f"BFSW{worker_id}_depth{bfs_item.depth}_step{step}")
@@ -453,16 +469,22 @@ Use MARK_PROMISING only for cells likely to contain the answer.
 
 Select the best action."""
 
-        messages = [{"role": "user", "content": [
-            {"type": "image", "image": grid_img},
-            {"type": "text",  "text":  user_prompt}
-        ]}]
+        # Check if view changed — only re-send image when it did
+        view_key = (round(center, 4), round(span, 4))
+        content_parts = []
+        if view_key != prev_view_key:
+            content_parts.append({"type": "image", "image": grid_img})
+            prev_view_key = view_key
+            conversation = []
+        content_parts.append({"type": "text", "text": user_prompt})
+        conversation.append({"role": "user", "content": content_parts})
 
         try:
-            output    = agent._generate(messages, tools=bfs_tools, max_tokens=2048)
+            output    = agent._generate(conversation, tools=bfs_tools, max_tokens=2048)
             log(f"  {tag} Step {step} RAW: {output}...")
             decisions = agent._parse_tool_calls(output)
             log(f"  {tag} Step {step} PARSED: {[d.get('action') for d in decisions]}")
+            conversation.append({"role": "assistant", "content": output})
         except Exception as e:
             log(f"  {tag} Step {step} PARSE ERROR: {e}")
             fix_msgs = [{"role": "user", "content":
@@ -470,6 +492,7 @@ Select the best action."""
             try:
                 fixed    = agent._generate(fix_msgs, tools=None, max_tokens=256)
                 decisions = agent._parse_tool_calls(fixed)
+                conversation.append({"role": "assistant", "content": fixed})
             except:
                 decisions = [{"action": "FINISHED"}]
 

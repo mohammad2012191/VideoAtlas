@@ -9,211 +9,335 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --primary-color: #0056b3;
-            --text-color: #333;
-            --bg-color: #fafafa;
-            --container-width: 1000px;
+            --primary: #1a56db;
+            --primary-light: #e8effd;
+            --text: #1a1a2e;
+            --text-secondary: #555;
+            --bg: #ffffff;
+            --bg-alt: #f8f9fc;
+            --border: #e5e7eb;
+            --container-width: 980px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.10);
+            --radius: 12px;
         }
 
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.7;
             margin: 0;
-            padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
             max-width: var(--container-width);
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
         }
 
-        /* Hero Section */
+        /* ── Hero ── */
         .hero {
             text-align: center;
-            padding: 60px 0 40px;
-            background-color: #fff;
-            border-bottom: 1px solid #eaeaea;
+            padding: 80px 0 56px;
+            background: linear-gradient(180deg, #f0f4ff 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--border);
         }
 
         .title {
-            font-size: 2.5rem;
+            font-size: 2.6rem;
             font-weight: 700;
-            margin-bottom: 10px;
-            color: #111;
+            line-height: 1.2;
+            margin: 0 auto 16px;
+            max-width: 800px;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            font-weight: 400;
         }
 
         .authors {
-            font-size: 1.1rem;
-            margin: 20px 0;
+            font-size: 1.05rem;
+            margin: 24px 0 8px;
+            line-height: 1.9;
         }
 
         .authors a {
-            color: var(--primary-color);
+            color: var(--primary);
             text-decoration: none;
-            margin: 0 5px;
+            font-weight: 500;
         }
-
-        .authors a:hover {
-            text-decoration: underline;
-        }
+        .authors a:hover { text-decoration: underline; }
 
         .affiliations {
-            font-size: 1rem;
-            color: #666;
-            margin-bottom: 20px;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .affiliations span { margin: 0 10px; }
+
+        .footnotes {
+            font-size: 0.82rem;
+            color: #888;
+            margin-bottom: 8px;
         }
 
-        .affiliations span {
-            display: inline-block;
-            margin: 0 10px;
-        }
-
-        /* Action Buttons */
+        /* ── Buttons ── */
         .button-group {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
+            gap: 12px;
+            margin-top: 28px;
+            flex-wrap: wrap;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            border-radius: 50px;
+            gap: 8px;
+            padding: 11px 24px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 500;
-            transition: background-color 0.2s;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
         }
 
-        .btn i {
-            margin-right: 8px;
+        .btn-primary {
+            background: var(--text);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #333;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
-        .btn:hover {
-            background-color: #555;
+        .btn-outline {
+            background: #fff;
+            color: var(--text);
+            border-color: var(--border);
+        }
+        .btn-outline:hover {
+            border-color: #bbb;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         .btn.disabled {
-            background-color: #ccc;
+            background: #e5e7eb;
+            color: #999;
             cursor: not-allowed;
+            border-color: transparent;
         }
+        .btn.disabled:hover { transform: none; box-shadow: none; }
 
-        /* Sections */
+        /* ── Sections ── */
         .section {
-            padding: 60px 0;
-            background-color: var(--bg-color);
+            padding: 72px 0;
         }
-
-        .section.white {
-            background-color: #fff;
+        .section-alt {
+            background: var(--bg-alt);
         }
 
         .section-title {
-            font-size: 1.8rem;
-            font-weight: 600;
+            font-size: 1.75rem;
+            font-weight: 700;
             text-align: center;
-            margin-bottom: 40px;
-            color: #111;
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
         }
 
-        .content {
-            font-size: 1.1rem;
+        .section-desc {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 48px;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Abstract ── */
+        .abstract-text {
+            font-size: 1.05rem;
             text-align: justify;
+            max-width: 820px;
+            margin: 0 auto;
+            color: #333;
         }
 
+        .abstract-text p { margin-bottom: 16px; }
+
+        /* ── Figures ── */
         .figure-container {
             text-align: center;
-            margin: 40px 0;
+            margin: 48px 0;
         }
 
         .figure-container img {
             max-width: 100%;
             height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .figure-container img:hover {
+            box-shadow: var(--shadow-lg);
         }
 
         .figure-caption {
-            font-size: 0.95rem;
-            color: #555;
-            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 16px;
             text-align: left;
+            max-width: 820px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
         }
 
-        /* Video Grid */
+        .figure-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        /* ── Video Grid ── */
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
         }
 
         .video-card {
             background: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .video-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .video-card video {
             width: 100%;
-            border-radius: 6px;
+            display: block;
             background-color: #000;
         }
 
+        .video-card-body {
+            padding: 16px 20px;
+        }
+
         .video-title {
-            margin-top: 15px;
             font-weight: 600;
-            font-size: 1.1rem;
-            color: #333;
+            font-size: 0.95rem;
+            color: var(--text);
+            margin: 0;
         }
 
-        /* BibTeX */
+        /* ── BibTeX ── */
+        .bibtex-wrapper {
+            position: relative;
+        }
+
         pre {
-            background-color: #f4f4f4;
-            padding: 20px;
-            border-radius: 8px;
+            background: var(--bg-alt);
+            padding: 24px;
+            border-radius: var(--radius);
             overflow-x: auto;
-            font-size: 0.9rem;
-            border: 1px solid #ddd;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            line-height: 1.8;
         }
 
-        /* Footer */
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: var(--bg-alt);
+            color: var(--text);
+        }
+
+        /* ── Footer ── */
         .footer {
             text-align: center;
             padding: 40px 0;
-            background-color: #fff;
-            border-top: 1px solid #eaeaea;
-            color: #666;
+            border-top: 1px solid var(--border);
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            width: 48px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+            margin: 0 auto 40px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .title { font-size: 1.8rem; }
+            .highlights-grid { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: 1fr; }
+            .hero { padding: 48px 0 36px; }
+            .section { padding: 48px 0; }
         }
     </style>
 </head>
 
 <body>
 
+    <!-- ── Hero ── -->
     <header class="hero">
         <div class="container">
-            <h1 class="title">VideoAtlas: Navigating Long-Form Video in Logarithmic Compute</h1>
+            <h1 class="title"><i class="fas fa-map-marked-alt" style="color: var(--primary); margin-right: 10px;"></i>VideoAtlas: Navigating Long-Form Video in Logarithmic Compute</h1>
 
             <div class="authors">
-                <a href="#">Mohamed Eltahir</a><sup>1</sup>,
-                <a href="#">Ali Habibullah</a><sup>1,†</sup>,
-                <a href="#">Yazan Alshoibi</a><sup>1,†</sup>, <br>
-                <a href="#">Lama Ayash</a><sup>1,2</sup>,
-                <a href="#">Tanveer Hussain</a><sup>3,*</sup>,
-                <a href="#">Naeemullah Khan</a><sup>1,*</sup>
+                <a href="https://www.linkedin.com/in/mohammad2012191/" target="_blank">Mohamed Eltahir</a><sup>1</sup>,
+                <a href="https://www.linkedin.com/in/ali-habibullah/" target="_blank">Ali Habibullah</a><sup>1,&dagger;</sup>,
+                <a href="https://www.linkedin.com/in/yazanalshoibi/" target="_blank">Yazan Alshoibi</a><sup>1,&dagger;</sup>,
+                <a href="https://www.linkedin.com/in/lama-a-9b9383224/" target="_blank">Lama Ayash</a><sup>1,2</sup>,
+                <a href="https://www.linkedin.com/in/tinu445/" target="_blank">Tanveer Hussain</a><sup>3,*</sup>,
+                <a href="https://www.linkedin.com/in/profkhan/" target="_blank">Naeemullah Khan</a><sup>1,&Dagger;</sup>
             </div>
 
             <div class="affiliations">
@@ -222,58 +346,69 @@
                 <span><sup>3</sup> Edge Hill University</span>
             </div>
 
-            <div style="font-size: 0.9rem; color: #888; margin-top: -10px;">
-                <span><sup>*</sup> Principal Investigator</span> | <span><sup>†</sup> Equal Contribution</span>
+            <div class="footnotes">
+                <sup>&dagger;</sup> Equal Contribution &nbsp;&middot;&nbsp;
+                <sup>*</sup> Corresponding Author &nbsp;&middot;&nbsp;
+                <sup>&Dagger;</sup> Principal Investigator
             </div>
 
             <div class="button-group">
-                <a href="#" class="btn disabled" title="Coming Soon">
-                    <i class="ai ai-arxiv"></i> Paper (Coming Soon)
+                <a href="https://arxiv.org/abs/2511.01617" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-file-pdf"></i> Paper
                 </a>
-                <a href="https://github.com/mohammad2012191/VideoAtlas" class="btn" title="Visit GitHub Repository">
+                <a href="https://github.com/mohammad2012191/VideoAtlas" class="btn btn-primary">
                     <i class="fab fa-github"></i> Code
                 </a>
             </div>
         </div>
     </header>
 
+    <!-- ── Abstract ── -->
     <section class="section">
         <div class="container">
             <h2 class="section-title">Abstract</h2>
-            <div class="content">
+            <div class="divider"></div>
+            <div class="abstract-text">
                 <p>
                     Extending language models to video introduces two challenges: <em>representation</em>, where
-                    existing methods rely on lossy approximations such as uniform sampling that sacrifices temporal
-                    coverage, and <em>long-context</em>, where caption- or agent-based pipelines collapse video into
-                    text and lose visual fidelity. To overcome this, we introduce <strong>VideoAtlas</strong>, a
-                    task-agnostic environment to represent video as a hierarchical grid that is simultaneously lossless,
-                    navigable, scalable, caption- and preprocessing-free.
+                    existing methods rely on lossy approximations such as uniform sampling, and <em>long-context</em>,
+                    where caption- or agent-based pipelines collapse video into text and lose visual fidelity. To
+                    overcome this, we introduce <strong>VideoAtlas</strong>, a task-agnostic environment to represent
+                    video as a hierarchical grid that is simultaneously lossless, navigable, scalable, caption- and
+                    preprocessing-free. An overview of the video is available at a glance, and any region can be
+                    recursively zoomed into, with the same visual representation used uniformly for the video,
+                    intermediate investigations, and the agent's memory, eliminating lossy text conversion end-to-end.
+                    This hierarchical structure ensures access depth grows only logarithmically with video length.
                 </p>
                 <p>
-                    An overview of the video is available at a glance, and any region can be recursively zoomed into,
-                    with the same visual representation used uniformly for the video, intermediate investigations, and
-                    the agent's memory, eliminating lossy text conversion end-to-end. This hierarchical structure
-                    ensures access depth grows only logarithmically with video length.
+                    For long-context, Recursive Language Models (RLMs) recently offered a powerful solution for long
+                    text, but extending them to visual domain requires a structured environment to recurse into, which
+                    VideoAtlas provides. VideoAtlas as a Markov Decision Process unlocks <strong>Video-RLM</strong>: a
+                    parallel Master-Worker architecture where a Master coordinates global exploration while Workers
+                    concurrently drill into assigned regions to accumulate lossless visual evidence.
                 </p>
                 <p>
-                    VideoAtlas as a Markov Decision Process unlocks <strong>Video-RLM</strong>: a parallel Master-Worker
-                    architecture where a Master coordinates global exploration while Workers concurrently drill into
-                    assigned regions to accumulate lossless visual evidence. We demonstrate three key findings: (1)
-                    logarithmic compute growth with video duration, (2) environment budgeting via maximum exploration
-                    depth, and (3) emergent adaptive compute allocation. On benchmarks spanning up to 10 hours,
-                    Video-RLM achieves competitive accuracy against standard approaches, demonstrating that video
-                    understanding can be effectively reformulated as structured environment navigation.
+                    We demonstrate three key findings: (1) logarithmic compute growth with video duration, in contrast
+                    to the linear cost of baselines, further amplified by a 30&ndash;60% multimodal cache hit rate
+                    arising from the grid's structural reuse. (2) Environment budgeting, where bounding the maximum
+                    exploration depth provides a principled compute-accuracy hyperparameter. (3) Emergent adaptive
+                    compute allocation that scales with question granularity. When scaling from 1-hour to 10-hour
+                    benchmarks, Video-RLM remains the most duration-robust method with minimal accuracy degradation
+                    while baselines degrade significantly, demonstrating that structured environment navigation is a
+                    viable and scalable paradigm for video understanding.
                 </p>
             </div>
         </div>
     </section>
 
-    <section class="section white">
+    <!-- ── Methodology ── -->
+    <section class="section section-alt">
         <div class="container">
             <h2 class="section-title">Methodology</h2>
+            <div class="divider"></div>
 
-            <h3 style="text-align: center; margin-bottom: 20px;">The VideoAtlas Environment</h3>
             <div class="figure-container">
+                <span class="figure-label">The VideoAtlas Environment</span>
                 <img src="figures/VideoAtlas.png" alt="The VideoAtlas Environment">
                 <p class="figure-caption">
                     <strong>The VideoAtlas Environment.</strong> (Left) The state space is a hierarchical grid stack
@@ -283,8 +418,8 @@
                 </p>
             </div>
 
-            <h3 style="text-align: center; margin-top: 60px; margin-bottom: 20px;">Video-RLM Architecture</h3>
-            <div class="figure-container">
+            <div class="figure-container" style="margin-top: 64px;">
+                <span class="figure-label">Video-RLM Architecture</span>
                 <img src="figures/grid2.png" alt="Video-RLM Architecture">
                 <p class="figure-caption">
                     <strong>Video-RLM overview.</strong> The Master examines the root grid and scratchpad, assigning
@@ -296,10 +431,11 @@
         </div>
     </section>
 
+    <!-- ── Exploration Examples ── -->
     <section class="section" id="examples">
         <div class="container">
             <h2 class="section-title">Exploration Examples</h2>
-            <p style="text-align: center; margin-bottom: 40px;">
+            <p class="section-desc">
                 Watch how Video-RLM navigates the hierarchical grid to pinpoint specific events within long-form videos.
             </p>
 
@@ -307,90 +443,139 @@
                 <div class="video-card">
                     <video controls muted preload="metadata">
                         <source src="examples/football/replay.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
-                    <div class="video-title">Football Match Analysis</div>
+                    <div class="video-card-body">
+                        <p class="video-title">Football Match Analysis</p>
+                    </div>
                 </div>
 
                 <div class="video-card">
                     <video controls muted preload="metadata">
                         <source src="examples/frieren/replay.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
-                    <div class="video-title">Frieren Anime Episode</div>
+                    <div class="video-card-body">
+                        <p class="video-title">Frieren Anime Episode</p>
+                    </div>
                 </div>
 
                 <div class="video-card">
                     <video controls muted preload="metadata">
                         <source src="examples/john_wick/replay.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
-                    <div class="video-title">John Wick Movie Scene</div>
+                    <div class="video-card-body">
+                        <p class="video-title">John Wick Movie Scene</p>
+                    </div>
                 </div>
 
                 <div class="video-card">
                     <video controls muted preload="metadata">
                         <source src="examples/narrator/replay.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
-                    <div class="video-title">Narrator Position</div>
+                    <div class="video-card-body">
+                        <p class="video-title">Narrator Position</p>
+                    </div>
                 </div>
 
                 <div class="video-card">
                     <video controls muted preload="metadata">
                         <source src="examples/desert/replay.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
-                    <div class="video-title">Desert Landscape</div>
+                    <div class="video-card-body">
+                        <p class="video-title">Desert Landscape</p>
+                    </div>
                 </div>
 
                 <div class="video-card">
                     <video controls muted preload="metadata">
                         <source src="examples/documentary/replay.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
-                    <div class="video-title">Documentary Movie</div>
+                    <div class="video-card-body">
+                        <p class="video-title">Documentary Movie</p>
+                    </div>
                 </div>
-
             </div>
         </div>
     </section>
 
-    <section class="section white">
+    <!-- ── Scaling Law ── -->
+    <section class="section section-alt">
         <div class="container">
             <h2 class="section-title">Logarithmic Compute Scaling</h2>
+            <div class="divider"></div>
             <div class="figure-container">
-                <img src="figures/scaling_law_final3.png" alt="Logarithmic compute scaling graph">
+                <img src="figures/scaling_law_final3.png" alt="Logarithmic compute scaling graph" style="max-width: 720px;">
                 <p class="figure-caption">
                     <strong>Logarithmic compute scaling with video duration.</strong> Video-RLM's hierarchical grid
-                    grows sub-linearly (O(log T)), requiring up to 5.7× fewer tokens than linear-scaling baselines. A
-                    uniform VLM maxes out its context trading off sampled frame count with resolution.
+                    grows sub-linearly (O(log T)), requiring up to 9.7&times; fewer effective tokens than linear-scaling baselines.
+                    A uniform VLM maxes out its context trading off sampled frame count with resolution.
                 </p>
             </div>
         </div>
     </section>
 
+    <!-- ── Environment Budgeting & Adaptive Compute ── -->
     <section class="section">
         <div class="container">
-            <h2 class="section-title" style="text-align: left;">BibTeX</h2>
-            <pre><code>@article{eltahir2026videoatlas,
-  title={VideoAtlas: Navigating Long-Form Video in Logarithmic Compute},
-  author={Eltahir, Mohamed and Habibullah, Ali and Alshoibi, Yazan and Ayash, Lama and Hussain, Tanveer and Khan, Naeemullah},
-  journal={arXiv preprint},
-  year={2026}
+            <h2 class="section-title">Environment Budgeting &amp; Adaptive Compute</h2>
+            <div class="divider"></div>
+            <div class="figure-container">
+                <img src="figures/depth_and_adaptive.png" alt="Environment budgeting and adaptive compute" style="max-width: 880px;">
+                <p class="figure-caption">
+                    <strong>Left: Environment budgeting</strong> &mdash; accuracy and tokens vs. max depth on LVB-10hr. Green marks the optimal depth (first sub-second layer).
+                    <strong>Right: Adaptive compute</strong> &mdash; average tokens scale with evidence spread without ground-truth supervision.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Worker Scaling ── -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Parallel Worker Scaling</h2>
+            <div class="divider"></div>
+            <div class="figure-container">
+                <img src="figures/worker_scaling.png" alt="Worker scaling" style="max-width: 520px;">
+                <p class="figure-caption">
+                    <strong>Worker scaling.</strong> Wall-clock time (normalized) vs. number of workers on LVB-10hr. Accuracy remains stable across all configurations while throughput improves 2.25&times; from 1 to 7 workers.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── BibTeX ── -->
+    <section class="section">
+        <div class="container" style="max-width: 700px;">
+            <h2 class="section-title">Citation</h2>
+            <div class="divider"></div>
+            <div class="bibtex-wrapper">
+                <button class="copy-btn" onclick="copyBibtex()"><i class="fas fa-copy"></i> Copy</button>
+                <pre><code id="bibtex">@inproceedings{eltahir2026videoatlas,
+  title     = {VideoAtlas: Navigating Long-Form Video in Logarithmic Compute},
+  author    = {Eltahir, Mohamed and Habibullah, Ali and Alshoibi, Yazan and
+               Ayash, Lama and Hussain, Tanveer and Khan, Naeemullah},
+  booktitle = {arXiv preprint},
+  year      = {2026}
 }</code></pre>
+            </div>
         </div>
     </section>
 
     <footer class="footer">
         <div class="container">
-            <p>
-                This website is structured for the presentation of the VideoAtlas paper. <br>
-                Source code and datasets will be linked upon public release.
-            </p>
+            VideoAtlas 2026
         </div>
     </footer>
 
-</body>
+    <script>
+    function copyBibtex() {
+        const text = document.getElementById('bibtex').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+            setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i> Copy', 2000);
+        });
+    }
+    </script>
 
+</body>
 </html>

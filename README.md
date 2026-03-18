@@ -93,10 +93,10 @@ At the core of VideoAtlas is a recursive K×K image grid (default K=8, yielding 
 |--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | Qwen3.5 (uniform) | 49.2 | -12.3 | 212K | 50.6 | -13.2 | 232K |
 | LLM over Captions | 62.1 | **-0.3** | 207K‡ | 36.0 | -28.2 | 235K‡ |
-| **Video-RLM (Qwen)** | 47.7 | -4.8 | 146K† | 49.7 | **-0.7** | 403K† |
+| **Video-RLM (Qwen)** | 47.7 | -4.8 | 148K† | 49.7 | **-0.7** | 403K† |
 | **Video-RLM (Gemini)** | **70.1** | -1.9 | 307K | **69.1** | -7.1 | 390K |
 
-> †Effective tokens after vLLM multimodal prefix cache (avg. 36–42% hit rate). ‡QA tokens only, excludes GPT-4o captioning cost.
+> ∆: Accuracy drop from standard benchmarks. †Effective tokens after vLLM multimodal prefix cache (avg. 36–42% hit rate). ‡QA tokens only, excludes GPT-4o captioning cost.
 
 <div align="center">
   <img src="figures/depth_and_adaptive.png" width="700">

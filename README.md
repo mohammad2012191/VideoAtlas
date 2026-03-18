@@ -105,7 +105,7 @@ At the core of VideoAtlas is a recursive K×K image grid (default K=8, yielding 
 
 <div align="center">
   <img src="figures/worker_scaling.png" width="500">
-  <p><em>Worker scaling: wall-clock time (normalized) vs. number of workers on LVB-10hr. Accuracy (annotated) remains stable across all configurations while throughput improves 2.25× from 2 to 8 workers.</em></p>
+  <p><em>Worker scaling: wall-clock time (normalized) vs. number of workers on LVB-10hr. Accuracy (annotated) remains stable across all configurations while throughput improves 2.25× from 1 to 7 workers.</em></p>
 </div>
 
 ---

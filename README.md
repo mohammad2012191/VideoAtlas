@@ -18,7 +18,7 @@
 
 - **Lossless Hierarchical Representation**: VideoAtlas renders any video as a navigable K×K image grid — no captions, no offline preprocessing, no context ceiling. Any frame is reachable in O(log T) steps.
 - **Video-RLM**: A parallel Master-Worker architecture extending Recursive Language Models to video. Workers explore grid subtrees concurrently and accumulate evidence in a lossless Visual Scratchpad, while a Master steers exploration via uncertainty analysis.
-- **Logarithmic Compute Scaling**: As video duration grows 600×, compute grows sub-linearly. Video-RLM uses up to **5.7× fewer tokens** than linear-scaling caption baselines, further amplified by a **30–60% multimodal cache hit rate**.
+- **Logarithmic Compute Scaling**: As video duration grows 600×, compute grows sub-linearly. Video-RLM uses up to **9.7× fewer tokens** than linear-scaling caption baselines, further amplified by a **30–60% multimodal cache hit rate**.
 - **Environment Budgeting**: Bounding the maximum exploration depth provides a principled compute-accuracy hyperparameter, directly controlling temporal resolution rather than frame quantity.
 - **Emergent Adaptive Compute**: Scattered answers (3+ temporal positions) consume 40% more tokens than localized ones — without any explicit supervision.
 - **VLM-Agnostic**: Works with any backbone (Qwen3.5, Gemini-3-Flash, etc.) without modifying the environment or coordination protocol.
@@ -27,7 +27,7 @@
 
 ## News
 
-- **[2026]** Paper open sourced! 🎉
+- **[March 2026]** VideoAtlas & VideoRLM Initial Release! 🎉
 
 ---
 
@@ -66,7 +66,8 @@ At the core of VideoAtlas is a recursive K×K image grid (default K=8, yielding 
 
 <div align="center">
   <img src="figures/scaling_law_final3.png" width="700">
-  <p><em>Logarithmic compute scaling with video duration. Video-RLM's hierarchical grid grows sub-linearly O(log T), requiring up to 5.7× fewer tokens than linear-scaling baselines at 10-hour duration.</em></p>
+  <p><em>Logarithmic compute scaling with video duration. Video-RLM's hierarchical grid grows sub-linearly O(log T), requiring up to 9.7× fewer tokens than linear-scaling baselines at 10-hour duration.</em></p>
+  
 </div>
 
 ### Standard Benchmarks (Long subsets)
@@ -74,13 +75,13 @@ At the core of VideoAtlas is a recursive K×K image grid (default K=8, yielding 
 | Method | Active Params | LVB | VMME |
 |--------|:---:|:---:|:---:|
 | GPT-4o | Prop. | 66.7 | 65.3 |
-| GPT-5 | Prop. | 72.6 | 81.8 |
+| GPT-5 | Prop. | 72.6 | **81.8** |
 | Gemini-3-Flash | Prop. | 74.5 | — |
 | Claude-Opus-4.5 | Prop. | 67.2 | 77.6 |
 | InternVL3.5-241B | 28B | 67.1 | 72.9 |
 | GLM-4.5V-106B | 12B | **76.7** | 74.6 |
 | MR.Video (Gemini+GPT-4o) | Prop. | 61.6 | 61.8 |
-| VideoARM (GPT-o3+GPT-4o) | Prop. | 76.4 | **81.2** |
+| VideoARM (GPT-o3+GPT-4o) | Prop. | 76.4 | 81.2 |
 | Qwen3.5 (uniform, 160 fr.) | 3B | 61.5 | 63.8 |
 | LLM over Captions | Prop.+3B | 62.4 | 64.2 |
 | **Video-RLM (Qwen3.5-35B)** | **3B** | 52.5 | 50.4 |
@@ -88,14 +89,14 @@ At the core of VideoAtlas is a recursive K×K image grid (default K=8, yielding 
 
 ### 10-Hour Variants
 
-| Method | LVB-10hr Acc. | Δ | Tokens | LVB Eff.↑ | VMME-10hr Acc. | Δ | Tokens | VMME Eff.↑ |
-|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Qwen3.5 (uniform) | 49.2 | -12.3 | 212K | 23.2 | 50.6 | -13.2 | 232K | 21.8 |
-| LLM over Captions | 62.1 | **-0.3** | 207K | 30.0 | 36.0 | -28.2 | 235K | 15.3 |
-| **Video-RLM (Qwen)** | 47.7 | -4.8 | 250K | 27–48† | 49.7 | **-0.7** | 625K | 11–20† |
-| **Video-RLM (Gemini)** | **70.1** | -1.9 | 352K | **28–50†** | **69.1** | -7.1 | 323K | **31–54†** |
+| Method | LVB-10hr Acc. | Δ | Tokens | VMME-10hr Acc. | Δ | Tokens |
+|--------|:---:|:---:|:---:|:---:|:---:|:---:|
+| Qwen3.5 (uniform) | 49.2 | -12.3 | 212K | 50.6 | -13.2 | 232K |
+| LLM over Captions | 62.1 | **-0.3** | 207K‡ | 36.0 | -28.2 | 235K‡ |
+| **Video-RLM (Qwen)** | 47.7 | -4.8 | 146K† | 49.7 | **-0.7** | 403K† |
+| **Video-RLM (Gemini)** | **70.1** | -1.9 | 307K | **69.1** | -7.1 | 390K |
 
-> Eff. = accuracy per 100K effective tokens. †Assumes 30–60% prefix-cache hit rate for Video-RLM.
+> †Effective tokens after vLLM multimodal prefix cache (avg. 36–42% hit rate). ‡QA tokens only, excludes GPT-4o captioning cost.
 
 <div align="center">
   <img src="figures/depth_and_adaptive.png" width="700">
@@ -278,14 +279,6 @@ results/
   }
 }
 ```
-
----
-
-## Limitations
-
-1. **VLM bottleneck**: The perceptual ceiling is set by the backbone VLM. Fine-grained distinctions (small text, similar actions) remain challenging regardless of environment resolution.
-2. **Evaluation scope**: Currently validated on multiple-choice and open-ended QA. The MDP formulation supports temporal grounding, summarization, and anomaly detection, but these are not yet empirically demonstrated.
-3. **Zero-shot only**: The MDP is solved entirely via zero-shot VLM reasoning. The discrete, finite action space makes VideoAtlas compatible with RL training (PPO, DQN), which is left to future work.
 
 ---
 

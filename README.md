@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[![arXiv](https://img.shields.io/badge/arXiv-Coming%20Soon-b31b1b)](https://arxiv.org)
+[![arXiv](https://img.shields.io/badge/arXiv-2603.17948-b31b1b)](https://arxiv.org/abs/2603.17948)
 </div>
 
 <div align="center">
@@ -287,11 +287,13 @@ results/
 If you use VideoAtlas in your research, please cite:
 
 ```bibtex
-@inproceedings{eltahir2026videoatlas,
-  title     = {VideoAtlas: Navigating Long-Form Video in Logarithmic Compute},
-  author    = {Eltahir, Mohamed and Habibullah, Ali and Alshoibi, Yazan and
-               Ayash, Lama and Hussain, Tanveer and Khan, Naeemullah},
-  booktitle = {TBD},
-  year      = {2026}
+@misc{eltahir2026videoatlasnavigatinglongformvideo,
+      title={VideoAtlas: Navigating Long-Form Video in Logarithmic Compute}, 
+      author={Mohamed Eltahir and Ali Habibullah and Yazan Alshoibi and Lama Ayash and Tanveer Hussain and Naeemullah Khan},
+      year={2026},
+      eprint={2603.17948},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2603.17948}, 
 }
 ```

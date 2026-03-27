@@ -1,4 +1,4 @@
-# VideoAtlas: Navigating Long-Form Video in Logarithmic Compute
+# VideoAtlas/Video-RLM: Navigating Long-Form Video in Logarithmic Compute
 
 **Authors:** Mohamed Eltahir, Ali Habibullah, Yazan Alshoibi, Lama Ayash, Tanveer Hussain and Naeemullah Khan
 

@@ -14,6 +14,9 @@ A full-width TIMELINE SCRUBBER at the bottom shows exactly where in the
 exploration process each frame falls, color-coded by activity type, so
 viewers always know where they are in the overall process.
 
+Visual identity follows DESIGN.md: dark navy chrome, blue→cyan gradient
+accents, brand mark in the header, monochrome-leaning category palette.
+
 Usage:
     python visualize_run.py
     python visualize_run.py --run results/run_20240101_120000_images
@@ -41,11 +44,31 @@ from PIL import Image, ImageDraw, ImageFont
 # ==========================================
 # LAYOUT CONSTANTS
 # ==========================================
-HEADER_HEIGHT    = 65    # Top bar: description + progress strip
-TIMELINE_HEIGHT  = 28    # Bottom bar: phase scrubber
+HEADER_HEIGHT    = 86    # Top bar: brand + activity + progress strip
+TIMELINE_HEIGHT  = 34    # Bottom bar: phase scrubber
 MAIN_WIDTH       = 960   # Left panel (main frame)
-SCRATCHPAD_WIDTH = 560   # Right panel (question + evidence log)
-OUTPUT_WIDTH     = MAIN_WIDTH + SCRATCHPAD_WIDTH   # 1520
+SCRATCHPAD_WIDTH = 580   # Right panel (question + evidence log)
+OUTPUT_WIDTH     = MAIN_WIDTH + SCRATCHPAD_WIDTH   # 1540
+
+
+# ==========================================
+# BRAND TOKENS  (mirrors DESIGN.md — dark mode)
+# ==========================================
+BRAND_BLUE       = (59, 130, 246)    # #3B82F6
+BRAND_CYAN       = (6,  182, 212)    # #06B6D4
+
+BG_PRIMARY       = (15,  23,  42)    # #0F172A
+BG_SECONDARY     = (30,  41,  59)    # #1E293B
+BG_TERTIARY      = (51,  65,  85)    # #334155
+
+TEXT_PRIMARY     = (249, 250, 251)   # #F9FAFB
+TEXT_SECONDARY   = (203, 213, 225)   # #CBD5E1
+TEXT_TERTIARY    = (148, 163, 184)   # #94A3B8
+
+BORDER_SUBTLE    = (40,  52,  73)    # near-invisible on dark navy
+BORDER_DEFAULT   = (51,  65,  85)    # divider color
+
+SUCCESS_GREEN    = (16,  185, 129)   # #10B981
 
 
 # ==========================================
@@ -64,7 +87,6 @@ CATEGORIES = [
     (r"^scratchpad_(\d+)items",          "scratchpad",  "Reviewing Evidence"),
 ]
 
-# Plain-English explanation of each frame type — shown in the header bar.
 CATEGORY_DESCRIPTIONS = {
     "global":     "Getting a bird's-eye view of the entire video",
     "dfs_masked": "Deciding which parts of the video need closer inspection",
@@ -79,21 +101,22 @@ CATEGORY_DESCRIPTIONS = {
     "unknown":    "Processing…",
 }
 
-# RGB colors — used directly in PIL and converted to BGR when applied to
-# numpy arrays.  All three uses (header stripe, scrubber, progress bar) now
-# pull from the same source so the palette is coherent.
+# Brand-aligned palette: a cool-family continuum (blue → cyan → teal) for
+# exploration activities, with success green reserved for evidence and slate
+# for neutral/transit states.  All hues live inside the DESIGN.md spirit of
+# "quiet confidence — no decoration for its own sake".
 CATEGORY_COLORS = {
-    "global":     (80,  180, 120),
-    "dfs_masked": (160, 130, 250),
-    "dfs_uncert": (140, 100, 220),
-    "worker":     (220, 160,  90),
-    "bfs_masked": (250, 180,  60),
-    "bfs_uncert": (230, 140,  50),
-    "bfsworker":  (230, 200, 160),
-    "zoom":       (60,  200, 220),
-    "navgrid":    (130, 150, 230),
-    "scratchpad": (100, 190, 150),
-    "unknown":    (100, 100, 100),
+    "global":     BRAND_BLUE,             # anchor / overview
+    "dfs_masked": (79,  114, 220),        # blue, slightly muted — planning
+    "dfs_uncert": (96,  165, 250),        # lighter blue — analysis
+    "worker":     BRAND_CYAN,             # active exploration
+    "bfs_masked": (20,  184, 166),        # teal — alternate mode
+    "bfs_uncert": (45,  212, 191),        # teal light
+    "bfsworker":  (14,  165, 233),        # sky — deep dive
+    "zoom":       (34,  211, 238),        # bright cyan — focus
+    "navgrid":    (100, 116, 139),        # slate — transit
+    "scratchpad": SUCCESS_GREEN,          # evidence accumulated
+    "unknown":    (71,  85,  105),
 }
 
 
@@ -118,22 +141,109 @@ def classify(filename):
 
 
 # ==========================================
-# FONT & TEXT HELPERS
+# FONT, LOGO & DRAW HELPERS
 # ==========================================
-def _get_font(size):
-    for font_path in [
-        "C:/Windows/Fonts/segoeui.ttf",
+_FONT_CACHE = {}
+
+def _get_font(size, bold=False):
+    """Brand prefers Poppins/Inter Bold for headings.  Fall back gracefully."""
+    key = (size, bold)
+    if key in _FONT_CACHE:
+        return _FONT_CACHE[key]
+
+    bold_candidates = [
+        "Poppins-Bold.ttf", "Poppins-SemiBold.ttf",
+        "Inter-Bold.ttf",   "Inter-SemiBold.ttf",
         "/System/Library/Fonts/Helvetica.ttc",
-        "C:/Windows/Fonts/arial.ttf",
+        "C:/Windows/Fonts/segoeuib.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    ]
+    regular_candidates = [
+        "Poppins-Regular.ttf",
+        "Inter-Regular.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+        "C:/Windows/Fonts/segoeui.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-    ]:
-        if os.path.exists(font_path):
-            try:
-                return ImageFont.truetype(font_path, size)
-            except Exception:
-                continue
-    return ImageFont.load_default()
+    ]
+    candidates = bold_candidates if bold else regular_candidates
+
+    for font_path in candidates:
+        try:
+            font = ImageFont.truetype(font_path, size)
+            _FONT_CACHE[key] = font
+            return font
+        except Exception:
+            continue
+
+    font = ImageFont.load_default()
+    _FONT_CACHE[key] = font
+    return font
+
+
+_LOGO_CACHE = {}
+
+def _load_logo(target_height):
+    """Load the brand mark, auto-crop transparent padding, cache by target height."""
+    if target_height in _LOGO_CACHE:
+        return _LOGO_CACHE[target_height]
+
+    logo_path = Path(__file__).parent / "figures" / "logo-videoatlas.png"
+    if not logo_path.exists():
+        _LOGO_CACHE[target_height] = None
+        return None
+
+    try:
+        img  = Image.open(logo_path).convert("RGBA")
+        bbox = img.getbbox()              # crops out fully-transparent borders
+        if bbox:
+            img = img.crop(bbox)
+        # The source asset is a horizontal lockup: brand mark on the left,
+        # faint wordmark on the right.  We render the wordmark separately with
+        # clean typography on dark navy, so isolate the mark by scanning for
+        # the empty vertical gap between mark and wordmark using alpha density.
+        arr = np.array(img)
+        if arr.shape[2] == 4:
+            alpha       = arr[:, :, 3]
+            col_density = (alpha > 30).sum(axis=0) / max(1, alpha.shape[0])
+            min_x       = int(alpha.shape[1] * 0.10)
+            gap_x       = None
+            in_gap_len  = 0
+            for x in range(min_x, alpha.shape[1]):
+                if col_density[x] < 0.02:
+                    in_gap_len += 1
+                    if in_gap_len >= 6:    # require a sustained gap
+                        gap_x = x - in_gap_len + 1
+                        break
+                else:
+                    in_gap_len = 0
+            if gap_x is not None and gap_x > min_x:
+                img = img.crop((0, 0, gap_x, alpha.shape[0]))
+                # Re-tighten vertically in case the spotlight glow is asymmetric
+                inner = img.getbbox()
+                if inner:
+                    img = img.crop(inner)
+        w, h  = img.size
+        new_w = max(1, int(w * target_height / h))
+        img   = img.resize((new_w, target_height), Image.LANCZOS)
+        _LOGO_CACHE[target_height] = img
+        return img
+    except Exception:
+        _LOGO_CACHE[target_height] = None
+        return None
+
+
+def _draw_gradient_rect(draw, x1, y1, x2, y2, color_a, color_b):
+    """Horizontal gradient from color_a (left) → color_b (right)."""
+    if x2 <= x1:
+        return
+    span = x2 - x1
+    for i in range(span):
+        t = i / max(1, span - 1)
+        r = int(color_a[0] + (color_b[0] - color_a[0]) * t)
+        g = int(color_a[1] + (color_b[1] - color_a[1]) * t)
+        b = int(color_a[2] + (color_b[2] - color_a[2]) * t)
+        draw.line([(x1 + i, y1), (x1 + i, y2)], fill=(r, g, b))
 
 
 def _format_time(seconds):
@@ -187,213 +297,248 @@ def _load_reasoning_for_scratchpad(scratchpad_img_path):
         return []
 
 
-# ── UI Colors (PIL RGB) ────────────────────────────────────
-_SCRATCHPAD_BG          = (30, 32, 36)
-_SCRATCHPAD_TITLE_BG    = (42, 45, 52)
-_SCRATCHPAD_LABEL_COLOR = (240, 240, 245)
-
-_QUESTION_BOX_BG        = (35, 38, 50)
-_QUESTION_BOX_BORDER    = (80, 100, 160)
-_QUESTION_LABEL_FG      = (120, 140, 200)
-_QUESTION_TEXT_FG       = (210, 215, 235)
-
-_ANSWER_BOX_BG          = (40, 55, 85)
-_ANSWER_BOX_BORDER      = (100, 150, 255)
-_ANSWER_LABEL_FG        = (180, 200, 255)
-_ANSWER_TEXT_FG         = (255, 255, 255)
-
-_REASONING_FG           = (220, 220, 225)
-_REASONING_TITLE        = (130, 200, 250)
-_REASONING_NEW_BG       = (45,  55,  70)   # Subtle highlight for newly added items
-_REASONING_NEW_TITLE    = (160, 220, 255)  # Brighter blue for newly added item headers
-_DIVIDER_COLOR          = (65,  70,  80)
-_TRUNCATED_FG           = (100, 110, 130)  # Muted indicator for items scrolled off
-
-
+# ==========================================
+# SCRATCHPAD PANEL
+# ==========================================
 def build_scratchpad_panel(scratchpad_img_path, prev_sp_path,
                            panel_w, panel_h, result=None, question=None):
     """
     Build a fixed-size scratchpad panel (numpy BGR array).
 
     Layout (top → bottom):
-      ┌─────────────────────────┐
-      │  QUESTION box (always)  │  pinned from frame 1
-      ├─────────────────────────┤
-      │  FINAL CONCLUSION box   │  only after AI has concluded
-      ├─────────────────────────┤
-      │  title bar (36 px)      │
-      ├─────────────────────────┤
-      │  per-item reasoning     │  new items highlighted; truncation indicator shown
-      └─────────────────────────┘
+      • QUESTION card         (pinned from frame 1)
+      • FINAL ANSWER card     (revealed after the AI concludes)
+      • EVIDENCE LOG header   (with count pill)
+      • Reasoning cards       (newest first; older items collapsed under a
+                               "↑ N hidden" indicator if they overflow)
     """
-    panel = np.full((panel_h, panel_w, 3), _SCRATCHPAD_BG, dtype=np.uint8)
+    panel = np.full((panel_h, panel_w, 3), BG_SECONDARY, dtype=np.uint8)
     pil   = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
     draw  = ImageDraw.Draw(pil)
 
-    PAD          = 12
-    font_title   = _get_font(18)
-    font_item    = _get_font(14)
-    font_q_label = _get_font(11)
-    font_q_text  = _get_font(14)
+    PAD          = 16
+    CARD_PAD     = 16
+    CARD_RADIUS  = 12
 
-    y_top = 0
+    font_label    = _get_font(10, bold=True)
+    font_body     = _get_font(16)
+    font_section  = _get_font(12, bold=True)
+    font_ans_main = _get_font(22, bold=True)
+    font_ev_hdr   = _get_font(13, bold=True)
+    font_ev_meta  = _get_font(11)
+    font_ev_body  = _get_font(13)
 
-    # ── QUESTION box — always shown when a question is available ──────
+    y = PAD
+
+    # ── QUESTION card ─────────────────────────────────────────────
     if question:
-        q_lines = _wrap_text(question, font_q_text, panel_w - PAD * 2, draw)
-        box_h   = PAD + 16 + len(q_lines) * 18 + PAD
-        draw.rectangle([(0, y_top), (panel_w - 1, y_top + box_h - 1)],
-                        fill=_QUESTION_BOX_BG)
-        draw.line([(0, y_top + box_h - 1), (panel_w - 1, y_top + box_h - 1)],
-                   fill=_QUESTION_BOX_BORDER, width=2)
-        draw.text((PAD, y_top + PAD), "QUESTION", font=font_q_label,
-                   fill=_QUESTION_LABEL_FG)
-        y = y_top + PAD + 16
+        q_lines = _wrap_text(question, font_body,
+                              panel_w - PAD * 2 - CARD_PAD * 2, draw)
+        card_h  = CARD_PAD + 12 + 10 + len(q_lines) * 22 + CARD_PAD
+        x1, y1  = PAD, y
+        x2, y2  = panel_w - PAD, y + card_h
+
+        draw.rounded_rectangle([x1, y1, x2, y2],
+                                radius=CARD_RADIUS, fill=BG_TERTIARY)
+        # Cyan accent stripe on top edge
+        draw.rounded_rectangle([x1, y1, x2, y1 + 3], radius=2, fill=BRAND_CYAN)
+
+        draw.text((x1 + CARD_PAD, y1 + CARD_PAD), "QUESTION",
+                   font=font_label, fill=TEXT_TERTIARY)
+        ty = y1 + CARD_PAD + 12 + 10
         for ql in q_lines:
-            draw.text((PAD, y), ql, font=font_q_text, fill=_QUESTION_TEXT_FG)
-            y += 18
-        y_top += box_h
+            draw.text((x1 + CARD_PAD, ty), ql, font=font_body, fill=TEXT_PRIMARY)
+            ty += 22
+        y = y2 + 12
 
-    # ── FINAL CONCLUSION box — shown only after the last scratchpad ───
+    # ── FINAL ANSWER card ─────────────────────────────────────────
     if result is not None:
-        font_ans_lbl  = _get_font(11)
-        font_ans_main = _get_font(20)
         answer    = result.get("predicted_answer", "?")
-        ans_lines = _wrap_text(f"Answer: {answer}", font_ans_main, panel_w - PAD * 2, draw)
-        box_h     = PAD + 16 + 6 + len(ans_lines) * 26 + PAD
+        ans_lines = _wrap_text(str(answer), font_ans_main,
+                                panel_w - PAD * 2 - CARD_PAD * 2, draw)
+        card_h    = CARD_PAD + 12 + 12 + len(ans_lines) * 28 + CARD_PAD
+        x1, y1    = PAD, y
+        x2, y2    = panel_w - PAD, y + card_h
 
-        draw.rectangle([(0, y_top), (panel_w - 1, y_top + box_h - 1)],
-                        fill=_ANSWER_BOX_BG)
-        draw.text((PAD, y_top + PAD), "FINAL CONCLUSION", font=font_ans_lbl,
-                   fill=_ANSWER_LABEL_FG)
-        y = y_top + PAD + 18
-        draw.line([(PAD, y), (panel_w - PAD, y)], fill=_ANSWER_BOX_BORDER, width=1)
-        y += 6
+        draw.rounded_rectangle([x1, y1, x2, y2],
+                                radius=CARD_RADIUS, fill=BG_TERTIARY)
+        # Brand blue→cyan gradient across the top — the moment of conclusion
+        _draw_gradient_rect(draw, x1, y1, x2, y1 + 4, BRAND_BLUE, BRAND_CYAN)
+
+        draw.text((x1 + CARD_PAD, y1 + CARD_PAD), "FINAL ANSWER",
+                   font=font_label, fill=TEXT_TERTIARY)
+        ty = y1 + CARD_PAD + 12 + 12
         for line in ans_lines:
-            draw.text((PAD, y), line, font=font_ans_main, fill=_ANSWER_TEXT_FG)
-            y += 26
-        draw.line([(0, y_top + box_h), (panel_w - 1, y_top + box_h)],
-                   fill=_ANSWER_BOX_BORDER, width=2)
-        y_top += box_h + 2
+            draw.text((x1 + CARD_PAD, ty), line,
+                       font=font_ans_main, fill=TEXT_PRIMARY)
+            ty += 28
+        y = y2 + 16
 
-    # ── Title bar ──────────────────────────────────────────────────────
-    title_h = 36
-    draw.rectangle([(0, y_top), (panel_w - 1, y_top + title_h - 1)],
-                    fill=_SCRATCHPAD_TITLE_BG)
-
-    if scratchpad_img_path is None:
-        draw.text((PAD, y_top + 9), "Evidence Log  (collecting…)",
-                   font=font_title, fill=(130, 130, 140))
-        return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
-
-    m       = re.search(r'scratchpad_(\d+)items', Path(scratchpad_img_path).stem)
-    n_items = m.group(1) if m else "?"
-    draw.text((PAD, y_top + 8), f"Evidence Log  —  {n_items} items",
-               font=font_title, fill=_SCRATCHPAD_LABEL_COLOR)
-    panel = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
-
-    # ── Reasoning items ────────────────────────────────────────────────
+    # ── EVIDENCE LOG section header ───────────────────────────────
     reasoning_items = _load_reasoning_for_scratchpad(scratchpad_img_path)
     prev_items      = _load_reasoning_for_scratchpad(prev_sp_path)
-    new_count       = len(reasoning_items) - len(prev_items)   # items added since last scratchpad
-    reasoning_y     = y_top + title_h + 10
+    new_count       = max(0, len(reasoning_items) - len(prev_items))
+
+    if scratchpad_img_path is None:
+        pill_text = "collecting"
+    else:
+        m         = re.search(r'scratchpad_(\d+)items',
+                              Path(scratchpad_img_path).stem)
+        n_items   = m.group(1) if m else "?"
+        pill_text = f"{n_items} item{'s' if n_items != '1' else ''}"
+
+    draw.text((PAD + 2, y), "EVIDENCE LOG",
+               font=font_section, fill=TEXT_SECONDARY)
+    pill_w  = int(draw.textlength(pill_text, font=font_label)) + 16
+    pill_x2 = panel_w - PAD
+    pill_x1 = pill_x2 - pill_w
+    draw.rounded_rectangle([pill_x1, y - 1, pill_x2, y + 17],
+                            radius=9, fill=BG_TERTIARY)
+    pill_tx = pill_x1 + (pill_w - int(draw.textlength(pill_text, font=font_label))) // 2
+    draw.text((pill_tx, y + 3), pill_text,
+               font=font_label, fill=TEXT_SECONDARY)
+    y += 30
 
     if not reasoning_items:
-        return panel
+        return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
-    pil2  = Image.fromarray(cv2.cvtColor(panel, cv2.COLOR_BGR2RGB))
-    draw2 = ImageDraw.Draw(pil2)
-
-    ITEM_MARGIN  = 16
-    LINE_H       = 19
-    font_ev_hdr  = _get_font(15)
-
-    all_blocks = []
+    # ── Reasoning cards ───────────────────────────────────────────
+    blocks = []
     for idx, item in enumerate(reasoning_items):
         is_new      = new_count > 0 and idx >= len(reasoning_items) - new_count
         letter      = item.get("letter", "?")
         t           = item.get("time", 0.0)
         desc        = item.get("description", "")
-        header_text = f"Event {letter} • {_format_time(t)}"
-        desc_lines  = _wrap_text(desc, font_item, panel_w - PAD * 2 - 4, draw2)
+        header_text = f"Event {letter}"
+        meta_text   = _format_time(t)
+        desc_lines  = _wrap_text(desc, font_ev_body,
+                                  panel_w - PAD * 2 - CARD_PAD * 2 - 6, draw)
+        block_h = CARD_PAD + 16 + 8 + len(desc_lines) * 18 + CARD_PAD - 4
+        blocks.append({
+            "is_new": is_new, "header": header_text, "meta": meta_text,
+            "lines": desc_lines, "h": block_h,
+        })
 
-        title_color = _REASONING_NEW_TITLE if is_new else _REASONING_TITLE
-        block_lines = [(header_text, title_color, font_ev_hdr, is_new)]
-        for dl in desc_lines:
-            block_lines.append((dl, _REASONING_FG, font_item, is_new))
-
-        block_h = (len(block_lines) * LINE_H) + ITEM_MARGIN
-        all_blocks.append((block_lines, block_h, is_new))
-
-    # Clip to available height, keeping newest items; emit truncation indicator
-    avail_h     = panel_h - reasoning_y - 10
-    total_h     = sum(bh for _, bh, _ in all_blocks)
-    start_block = 0
-
+    avail_h = panel_h - y - PAD
+    total_h = sum(b["h"] + 10 for b in blocks)
+    start   = 0
     if total_h > avail_h:
         running = 0
-        for i, (_, bh, _) in enumerate(all_blocks):
-            running += bh
+        for i, b in enumerate(blocks):
+            running += b["h"] + 10
             if running >= total_h - avail_h:
-                start_block = i
+                start = i + 1
                 break
 
-    if start_block > 0:
-        font_trunc  = _get_font(11)
-        skipped_txt = f"↑  {start_block} earlier item{'s' if start_block != 1 else ''} not shown"
-        draw2.text((PAD, reasoning_y), skipped_txt, font=font_trunc, fill=_TRUNCATED_FG)
-        reasoning_y += 18
+    if start > 0:
+        font_trunc = _get_font(10)
+        msg        = f"{start} earlier item{'s' if start != 1 else ''} hidden"
+        draw.text((PAD + 2, y), "↑  " + msg,
+                   font=font_trunc, fill=TEXT_TERTIARY)
+        y += 18
 
-    cur_y = reasoning_y
-    for block_lines, block_h, is_new in all_blocks[start_block:]:
-        if cur_y + block_h > panel_h - 2:
+    for b in blocks[start:]:
+        if y + b["h"] > panel_h - PAD:
             break
-        if is_new:
-            draw2.rectangle(
-                [(2, cur_y - 2), (panel_w - 3, cur_y + block_h - ITEM_MARGIN + 2)],
-                fill=_REASONING_NEW_BG,
-            )
-        for line_text, line_color, line_font, new_flag in block_lines:
-            draw2.text((PAD + (4 if new_flag else 0), cur_y), line_text,
-                        font=line_font, fill=line_color)
-            cur_y += LINE_H
-        draw2.line([(PAD, cur_y), (panel_w - PAD, cur_y)], fill=_DIVIDER_COLOR, width=1)
-        cur_y += ITEM_MARGIN
+        x1, y1 = PAD, y
+        x2, y2 = panel_w - PAD, y + b["h"]
+        draw.rounded_rectangle([x1, y1, x2, y2], radius=10, fill=BG_TERTIARY)
+        # Cyan left-edge accent on items added in this round
+        if b["is_new"]:
+            draw.rounded_rectangle([x1, y1, x1 + 3, y2],
+                                    radius=2, fill=BRAND_CYAN)
 
-    return cv2.cvtColor(np.array(pil2), cv2.COLOR_RGB2BGR)
+        draw.text((x1 + CARD_PAD, y1 + CARD_PAD), b["header"],
+                   font=font_ev_hdr, fill=TEXT_PRIMARY)
+        meta_w = int(draw.textlength(b["meta"], font=font_ev_meta))
+        draw.text((x2 - CARD_PAD - meta_w, y1 + CARD_PAD + 2),
+                   b["meta"], font=font_ev_meta, fill=TEXT_TERTIARY)
+
+        ty = y1 + CARD_PAD + 16 + 8
+        for line in b["lines"]:
+            draw.text((x1 + CARD_PAD, ty), line,
+                       font=font_ev_body, fill=TEXT_SECONDARY)
+            ty += 18
+
+        y = y2 + 10
+
+    return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
 # ==========================================
 # HEADER
 # ==========================================
 def make_header(label, category, frame_num, total_frames):
-    color_rgb = CATEGORY_COLORS.get(category, (80, 80, 80))
+    color_rgb = CATEGORY_COLORS.get(category, CATEGORY_COLORS["unknown"])
+    desc      = CATEGORY_DESCRIPTIONS.get(category, label)
 
-    header = np.full((HEADER_HEIGHT, OUTPUT_WIDTH, 3), (22, 24, 28), dtype=np.uint8)
-    # Accent stripe — RGB→BGR for the numpy array
-    header[:, :10, :] = _rgb_to_bgr(color_rgb)
+    header = np.full((HEADER_HEIGHT, OUTPUT_WIDTH, 3), BG_PRIMARY, dtype=np.uint8)
+    pil    = Image.fromarray(cv2.cvtColor(header, cv2.COLOR_BGR2RGB))
+    draw   = ImageDraw.Draw(pil)
 
-    pil  = Image.fromarray(cv2.cvtColor(header, cv2.COLOR_BGR2RGB))
-    draw = ImageDraw.Draw(pil)
+    inner_top    = 0
+    inner_bottom = HEADER_HEIGHT - 4    # leave room for progress strip
+    cx_y         = (inner_top + inner_bottom) // 2
 
-    font_big   = _get_font(22)
-    font_small = _get_font(13)
+    # ── Brand block ───────────────────────────────────────────────
+    logo_h   = 44
+    logo_y   = cx_y - logo_h // 2
+    logo_img = _load_logo(logo_h)
+    cursor_x = 20
 
-    desc = CATEGORY_DESCRIPTIONS.get(category, label)
-    draw.text((22, 14), desc, font=font_big, fill=(245, 245, 250))
+    if logo_img is not None:
+        pil.paste(logo_img, (cursor_x, logo_y), logo_img)
+        cursor_x += logo_img.size[0] + 12
+
+    font_brand = _get_font(20, bold=True)
+    brand      = "VideoAtlas"
+    brand_w    = int(draw.textlength(brand, font=font_brand))
+    # Vertically center the wordmark inside the chrome
+    draw.text((cursor_x, cx_y - 13), brand,
+               font=font_brand, fill=TEXT_PRIMARY)
+    cursor_x += brand_w + 22
+
+    # Vertical divider
+    div_top    = cx_y - 14
+    div_bottom = cx_y + 14
+    draw.line([(cursor_x, div_top), (cursor_x, div_bottom)],
+               fill=BORDER_DEFAULT, width=1)
+    cursor_x += 18
+
+    # ── Category dot ──────────────────────────────────────────────
+    dot_r = 5
+    draw.ellipse([cursor_x, cx_y - dot_r,
+                   cursor_x + dot_r * 2, cx_y + dot_r],
+                  fill=color_rgb)
+    cursor_x += dot_r * 2 + 10
+
+    # ── Activity description + frame counter ──────────────────────
+    font_desc  = _get_font(15, bold=True)
+    font_meta  = _get_font(12)
 
     frame_text = f"Frame {frame_num} / {total_frames}"
-    w_frame    = draw.textlength(frame_text, font=font_small)
-    draw.text((MAIN_WIDTH - w_frame - 20, 18), frame_text,
-               font=font_small, fill=(100, 110, 120))
+    meta_w     = int(draw.textlength(frame_text, font=font_meta))
+    max_desc_w = OUTPUT_WIDTH - cursor_x - meta_w - 40
 
-    # Progress bar — thin strip at the bottom of the header
-    bar_x1, bar_x2 = 22, OUTPUT_WIDTH - 22
-    bar_y, bar_h   = HEADER_HEIGHT - 11, 5
-    draw.rectangle([(bar_x1, bar_y), (bar_x2, bar_y + bar_h)], fill=(45, 50, 60))
-    fill_x = bar_x1 + int((bar_x2 - bar_x1) * frame_num / total_frames)
-    if fill_x > bar_x1:
-        draw.rectangle([(bar_x1, bar_y), (fill_x, bar_y + bar_h)], fill=color_rgb)
+    desc_render = desc
+    while int(draw.textlength(desc_render, font=font_desc)) > max_desc_w and len(desc_render) > 4:
+        desc_render = desc_render[:-2]
+    if desc_render != desc:
+        desc_render = desc_render.rstrip() + "…"
+
+    draw.text((cursor_x, cx_y - 10), desc_render,
+               font=font_desc, fill=TEXT_PRIMARY)
+    draw.text((OUTPUT_WIDTH - 20 - meta_w, cx_y - 8),
+               frame_text, font=font_meta, fill=TEXT_TERTIARY)
+
+    # ── Progress bar — full-width gradient on a subtle track ──────
+    bar_y, bar_h = HEADER_HEIGHT - 4, 4
+    draw.rectangle([(0, bar_y), (OUTPUT_WIDTH, bar_y + bar_h)],
+                    fill=BORDER_SUBTLE)
+    fill_x = int(OUTPUT_WIDTH * frame_num / max(1, total_frames))
+    if fill_x > 0:
+        _draw_gradient_rect(draw, 0, bar_y, fill_x, bar_y + bar_h,
+                             BRAND_BLUE, BRAND_CYAN)
 
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
@@ -405,34 +550,48 @@ def build_timeline_scrubber(categories_all, current_idx, width, height):
     """
     Full-width bar at the bottom of the frame.  Each segment represents one
     frame, colored by its activity category.  Past frames are dimmed; the
-    current frame is marked with a bright vertical tick.  Viewers can see at
-    a glance where in the overall exploration process each frame falls.
+    current frame is marked with a bright vertical tick.  Wrapped in a
+    subtle rounded track so it reads as a single composed element rather
+    than a row of raw rectangles.
     """
-    bar   = np.full((height, width, 3), (20, 22, 26), dtype=np.uint8)
-    total = len(categories_all)
-    if total == 0:
+    bar = np.full((height, width, 3), BG_PRIMARY, dtype=np.uint8)
+    if not categories_all:
         return bar
 
-    seg_w = width / total
-    for i, cat in enumerate(categories_all):
-        color = CATEGORY_COLORS.get(cat, (80, 80, 80))
-        x1    = int(i * seg_w)
-        x2    = max(x1 + 1, int((i + 1) * seg_w))
-        if i < current_idx:
-            c_bgr = (int(color[2] * 0.4), int(color[1] * 0.4), int(color[0] * 0.4))
-        else:
-            c_bgr = _rgb_to_bgr(color)
-        bar[5:height - 5, x1:x2] = c_bgr
-
-    # Current-position marker
-    cx = int((current_idx + 0.5) * seg_w)
-    bar[:, max(0, cx - 1):min(width, cx + 2)] = (255, 255, 255)
-
-    # "TIMELINE" label on the left
     pil  = Image.fromarray(cv2.cvtColor(bar, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil)
-    draw.text((6, (height - 11) // 2), "TIMELINE", font=_get_font(10),
-               fill=(140, 150, 165))
+
+    # Label
+    label_font = _get_font(10, bold=True)
+    draw.text((16, (height - 12) // 2), "TIMELINE",
+               font=label_font, fill=TEXT_TERTIARY)
+
+    # Track
+    inner_x1 = 92
+    inner_x2 = width - 16
+    inner_y1 = 9
+    inner_y2 = height - 9
+    inner_w  = inner_x2 - inner_x1
+    inner_h  = inner_y2 - inner_y1
+    draw.rounded_rectangle([inner_x1, inner_y1, inner_x2, inner_y2],
+                            radius=inner_h // 2, fill=BG_SECONDARY)
+
+    total = len(categories_all)
+    seg_w = inner_w / total
+    for i, cat in enumerate(categories_all):
+        color = CATEGORY_COLORS.get(cat, CATEGORY_COLORS["unknown"])
+        x1    = inner_x1 + int(i * seg_w)
+        x2    = inner_x1 + max(int(i * seg_w) + 1, int((i + 1) * seg_w))
+        if i < current_idx:
+            color = (int(color[0] * 0.45),
+                     int(color[1] * 0.45),
+                     int(color[2] * 0.45))
+        draw.rectangle([x1, inner_y1 + 2, x2, inner_y2 - 2], fill=color)
+
+    # Current-position marker
+    cx = inner_x1 + int((current_idx + 0.5) * seg_w)
+    draw.rectangle([cx - 1, inner_y1 - 2, cx + 1, inner_y2 + 2],
+                    fill=TEXT_PRIMARY)
 
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
@@ -450,21 +609,30 @@ def prepare_frame(img_path, label, category, frame_num, total_frames,
         main | scratchpad  (target_content_h)
         timeline scrubber  (TIMELINE_HEIGHT)
     """
+    pad_color_bgr = _rgb_to_bgr(BG_PRIMARY)
+
     # ---- Main frame ----
     img = cv2.imread(str(img_path))
     if img is None:
-        img = np.zeros((target_content_h, MAIN_WIDTH, 3), dtype=np.uint8)
+        img = np.full((target_content_h, MAIN_WIDTH, 3), pad_color_bgr, dtype=np.uint8)
         cv2.putText(img, f"Could not load: {img_path.name}", (20, 200),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, _rgb_to_bgr((239, 68, 68)), 2)
     else:
+        # Scale-to-fit inside MAIN_WIDTH × target_content_h preserving aspect.
+        # Never crop — tall grids (8×8) must stay fully visible.  Excess space
+        # is letterboxed with the chrome background colour so it reads as part
+        # of the surrounding panel rather than a hard black bar.
         h, w  = img.shape[:2]
-        new_h = int(h * MAIN_WIDTH / w)
-        img   = cv2.resize(img, (MAIN_WIDTH, new_h), interpolation=cv2.INTER_AREA)
-        if img.shape[0] < target_content_h:
-            pad = np.zeros((target_content_h - img.shape[0], MAIN_WIDTH, 3), dtype=np.uint8)
-            img = np.vstack([img, pad])
-        elif img.shape[0] > target_content_h:
-            img = img[:target_content_h, :, :]
+        scale = min(MAIN_WIDTH / w, target_content_h / h)
+        new_w = max(1, int(w * scale))
+        new_h = max(1, int(h * scale))
+        img   = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        canvas = np.full((target_content_h, MAIN_WIDTH, 3),
+                          pad_color_bgr, dtype=np.uint8)
+        y_off  = (target_content_h - new_h) // 2
+        x_off  = (MAIN_WIDTH - new_w) // 2
+        canvas[y_off:y_off + new_h, x_off:x_off + new_w] = img
+        img = canvas
 
     # ---- Scratchpad panel ----
     sp_panel = build_scratchpad_panel(
@@ -473,8 +641,9 @@ def prepare_frame(img_path, label, category, frame_num, total_frames,
         result=result, question=question,
     )
 
-    # ---- Vertical divider ----
-    divider = np.full((target_content_h, 2, 3), (60, 60, 60), dtype=np.uint8)
+    # ---- Vertical divider — subtle, matches border token ----
+    divider = np.full((target_content_h, 1, 3),
+                       _rgb_to_bgr(BORDER_DEFAULT), dtype=np.uint8)
 
     content_row = np.hstack([img, divider, sp_panel])
     if content_row.shape[1] != OUTPUT_WIDTH:
@@ -555,7 +724,11 @@ def _reencode_h264(input_path, output_path, end_hold_seconds=4):
         str(output_path),
     ]
     print(f"  Re-encoding to H.264 with ffmpeg (+ {end_hold_seconds}s end freeze)...")
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+    except FileNotFoundError:
+        print("  [!] ffmpeg not found on PATH — skipping re-encode pass.")
+        return False
     if result.returncode != 0:
         print(f"  [!] ffmpeg re-encode failed:\n{result.stderr[-400:]}")
         return False
@@ -634,15 +807,46 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
         if img is not None:
             h, w = img.shape[:2]
             sample_heights.append(int(h * MAIN_WIDTH / w))
-    target_content_h = int(np.median(sample_heights)) if sample_heights else 720
+    # Use the TALLEST sample so the panel can show every image at full size —
+    # square 8×8 grids especially must never be cropped.  Shorter images
+    # (scratchpads, zooms) get centered with letterbox padding in prepare_frame.
+    target_content_h = max(sample_heights) if sample_heights else 720
+    # H.264 (avc1) requires even dimensions; round up to keep the layout intact.
+    if target_content_h % 2 != 0:
+        target_content_h += 1
     total_h          = target_content_h + HEADER_HEIGHT + TIMELINE_HEIGHT
+    if total_h % 2 != 0:
+        total_h += 1
 
+    # opencv-python wheels vary in which codecs they register (e.g. macOS builds
+    # without FFmpeg drop mp4v).  Try a sequence of fourccs and use the first
+    # one that opens.  avc1 = H.264 via AVFoundation/V4L, MJPG = universal.
     tmp_path = output_path.replace(".mp4", "_raw.mp4")
-    fourcc   = cv2.VideoWriter_fourcc(*"mp4v")
-    writer   = cv2.VideoWriter(tmp_path, fourcc, fps, (OUTPUT_WIDTH, total_h))
+    writer = None
+    for fcc in ("avc1", "mp4v", "H264", "MJPG"):
+        fourcc = cv2.VideoWriter_fourcc(*fcc)
+        # MJPG needs a .avi container to be reliable
+        candidate_path = tmp_path
+        if fcc == "MJPG":
+            candidate_path = tmp_path.replace(".mp4", ".avi")
+        # Wipe any leftover from a previous (possibly failed) attempt so the
+        # codec gets a clean slate.
+        if os.path.exists(candidate_path):
+            try:
+                os.remove(candidate_path)
+            except OSError:
+                pass
+        w = cv2.VideoWriter(candidate_path, fourcc, fps, (OUTPUT_WIDTH, total_h))
+        if w.isOpened():
+            writer   = w
+            tmp_path = candidate_path
+            print(f"  Encoder: {fcc}")
+            break
+        w.release()
 
-    if not writer.isOpened():
-        print(f"[!] Could not open VideoWriter. Try installing opencv-python.")
+    if writer is None:
+        print("[!] Could not open VideoWriter with any of avc1/mp4v/H264/MJPG.")
+        print("    Reinstall opencv-python (`pip install --force-reinstall opencv-python`).")
         return None
 
     for i, (category, label, img_path) in enumerate(classified, 1):
@@ -665,12 +869,21 @@ def build_video(run_folder, output_path=None, fps=1.5, result_json_path=None):
     ffmpeg_ok = _reencode_h264(tmp_path, output_path)
     if ffmpeg_ok:
         os.remove(tmp_path)
-        print(f"\n✓  Saved (H.264): {output_path}")
+        print(f"\n✓  Saved (H.264 + end freeze): {output_path}")
     else:
+        # Fallback: keep what cv2.VideoWriter produced.  If the encoder needed
+        # an .avi container (MJPG), preserve the extension so the file stays
+        # playable rather than mis-labeled as .mp4.
         import shutil
-        shutil.move(tmp_path, output_path)
-        print(f"\n✓  Saved (mp4v fallback): {output_path}")
-        print("   Install ffmpeg for full WhatsApp/phone compatibility.")
+        src_ext  = os.path.splitext(tmp_path)[1]
+        out_ext  = os.path.splitext(output_path)[1]
+        final_out = output_path
+        if src_ext != out_ext:
+            final_out = os.path.splitext(output_path)[0] + src_ext
+        shutil.move(tmp_path, final_out)
+        print(f"\n✓  Saved (no ffmpeg re-encode): {final_out}")
+        print("   Install ffmpeg to add the end-of-video freeze frame.")
+        output_path = final_out
 
     duration = total / fps
     print(f"   {total} frames · {fps} fps · {duration:.1f}s duration")
@@ -698,7 +911,7 @@ def main():
         run_folder = args.run
     else:
         print("=" * 60)
-        print("  VIDEO EXPLORER — Run Visualizer")
+        print("  VIDEOATLAS — Run Visualizer")
         print("=" * 60)
 
         results_dir = Path("results")
